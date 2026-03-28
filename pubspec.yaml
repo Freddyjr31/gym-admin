@@ -1,7 +1,7 @@
 name: gym_admin
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0+0005
+version: 0.1.0+0006
 
 environment:
   sdk: ^3.11.0

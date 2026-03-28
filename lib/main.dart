@@ -1,51 +1,37 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/data/datasource/Local/recipe_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/recipe_cost_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/reipe.dart';
+import 'package:gym_admin/core/utils/Logs/log_service.dart';
+import 'package:gym_admin/data/datasource/Local/hive_config/hive_config.dart';
 import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
 import 'package:gym_admin/presentation/providers/fixed_cost_provider.dart';
 import 'package:gym_admin/presentation/screens/navigation_screen.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-// ignore: depend_on_referenced_packages
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
-  //* Initialize Hive
-  await Hive.initFlutter();
+  // Inicializamos el logger
+  LoggerService.init();
 
-  final dir = await getApplicationSupportDirectory();
-  log("📁 Hive está guardando datos en: ${dir.path}");
+  // Configuramos la captura de errores global
+  FlutterError.onError = LoggerService.logFlutterError;
 
-  // if(kDebugMode) {
-  //   await Hive.deleteBoxFromDisk('recipesBox'); // <--- BORRA LA CAJA SI DA ERROR
-  // }
+  log("Aplicación iniciada...");
+  log(Directory.systemTemp.path);
 
-  //* ======== Registrar adapters
-
-  //* para datos de entrada (Formulario)
-  Hive.registerAdapter(RecipeModelAdapter());
-  Hive.registerAdapter(PrincipalProteinModelAdapter());
-  Hive.registerAdapter(AdditionalIngredientsAdapter());
-  Hive.registerAdapter(SectionsAdapter());
-  Hive.registerAdapter(ItemsSectionsAdapter());
-  //* para datos de salida (Resultados calculados)
-  Hive.registerAdapter(WasteCalculationsCostAdapter());
-  Hive.registerAdapter(PortionCostAdapter());
-  Hive.registerAdapter(MainIngredientCostAdapter());
-  Hive.registerAdapter(AdditionalItemCostAdapter());
-  Hive.registerAdapter(AdditionalSectionCostAdapter());
-  Hive.registerAdapter(EconomicSummaryCostAdapter());
-  Hive.registerAdapter(BusinessMaintenanceCostAdapter());
-  Hive.registerAdapter(RecipeCostModelAdapter());
-
-
-  //* Abre la "caja" (tabla/colección) donde guardarás las recetas
-  recipeBox = await Hive.openBox<RecipeModel>('recipesBox');
+  try {
+    //* Initialize Hive
+    LoggerService.write('Iniciando Hive...');
+    // await Hive.initFlutter(path);
+    await HiveConfig.init();
+  } catch (e) {
+    log("Error al inicializar Hive: $e");
+    LoggerService.write('Excepción en main: $e\n');
+    rethrow;
+  }
 
   runApp(
     MultiProvider(
