@@ -408,7 +408,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                 label: 'Costo por kg',
                                 child: TextFormBox(
                                   controller: protein._buyWeightController,
-                                  placeholder: '1kg',
+                                  placeholder: '1\$',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
                                 ),
@@ -416,7 +416,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                             ),
                             Expanded(
                               child: InfoLabel(
-                                label: 'Kg comprados', 
+                                label: 'Cantidad de Kg comprados', 
                                 child: TextFormBox(
                                   controller: protein._buyKgWeightController,
                                   placeholder: '1',
