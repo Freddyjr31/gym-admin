@@ -2,6 +2,8 @@
 import 'dart:developer';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/fixed_cost_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/boxes.dart';
 import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
 import 'package:gym_admin/presentation/providers/fixed_cost_provider.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +57,7 @@ class _FormFixedCostState extends State<FormFixedCost> {
   }
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
 
     final size = MediaQuery.of(context).size;
     
@@ -74,7 +76,6 @@ class _FormFixedCostState extends State<FormFixedCost> {
           key: _formKey,
           child: Column(
             children: [
-      
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -94,7 +95,7 @@ class _FormFixedCostState extends State<FormFixedCost> {
                     ),
                   ],
                 ),
-      
+              
                 ListView.builder(
                   shrinkWrap: true,
                   itemCount: _fixedCostList.length,
@@ -146,9 +147,9 @@ class _FormFixedCostState extends State<FormFixedCost> {
                     ),
                   );
                 }),
-      
+              
                 const SizedBox(height: 20),
-      
+              
                 //* Botón para guardar los datos
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -157,27 +158,46 @@ class _FormFixedCostState extends State<FormFixedCost> {
                       child: const Text('Guardar gastos'),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-
+        
                           //* sumar los costos
                           double totalCost = 0;
                           double exchangeRate = exchangeRateProvider.getExchangeRate();
-
+        
                           for (var cost in _fixedCostList) {
                             totalCost += double.parse(cost._costController.text);
                           }
-
+        
                           log( 'Costo total: $totalCost bs/usds' );
-
+        
                           double totalAllCost = fixedCostProvider.calculatedFixedCost(
-                            totalCost, exchangeRate
-                            );
-
+                            totalCost, 
+                            exchangeRate
+                          );
+        
                           fixedCostProvider.setFixedCost(totalAllCost);
-
                           log( 'Tasa de cambio: $exchangeRate' );
                           log( 'Costo total: $totalAllCost' );
+        
+                          for (var cost in _fixedCostList) {
+                            await fixedCostBox.add(
+                                FixedCostAdapter(
+                                  fixedCostItems: [
+                                    FixedCostItem(
+                                      nameCost: cost._nameCostController.text,
+                                      cost: double.parse(cost._costController.text),
+                                    )
+                                ],
+                              )
+                            );
+                          }
 
+                          //* los datos de la caja de gastos fijos
+                          log('Datos de la caja de gastos fijos:');
+                          for (var i = 0; i < fixedCostBox.length; i++) {
+                            final item = fixedCostBox.getAt(i);
+                            log('Gasto fijo ${i + 1}: ${item?.fixedCostItems.map((e) => 'Nombre: ${e.nameCost}, Costo: ${e.cost}').join(', ')}');
+                          }
+        
                           await displayInfoBar(context, builder: (context, close) {
                               return InfoBar(
                                 title: const Text('Gastos calculados'),
@@ -195,7 +215,7 @@ class _FormFixedCostState extends State<FormFixedCost> {
                     ),
                   ],
                 ),
-      
+              
             ],
           ),
         ),

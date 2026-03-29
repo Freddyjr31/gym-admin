@@ -1,12 +1,15 @@
 
-import 'package:gym_admin/data/datasource/Local/recipe_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/recipe_cost_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/reipe.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/fixed_cost_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/recipe_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/recipe_cost_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/boxes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
 
 class HiveConfig {
+
+  /// Inicializa Hive, registra los adaptadores y abre las cajas principales
   static Future<void> init() async {
 
     final dir = await getApplicationSupportDirectory();
@@ -16,10 +19,11 @@ class HiveConfig {
 
     _registerAdapters();
     
-    // Opcional: Abrir las cajas principales aquí mismo
     recipeBox = await Hive.openBox<RecipeModel>('recipesBox');
+    fixedCostBox = await Hive.openBox<FixedCostAdapter>('fixedCostBox');
   }
 
+  /// Registra todos los adaptadores de Hive necesarios para la aplicación
   static void _registerAdapters() {
     //* Datos de entrada
     Hive.registerAdapter(RecipeModelAdapter());
@@ -37,5 +41,9 @@ class HiveConfig {
     Hive.registerAdapter(EconomicSummaryCostAdapter());
     Hive.registerAdapter(BusinessMaintenanceCostAdapter());
     Hive.registerAdapter(RecipeCostModelAdapter());
+
+    //* costos fijos
+    Hive.registerAdapter(FixedCostAdapterAdapter());
+    Hive.registerAdapter(FixedCostItemAdapter());
   }
 }

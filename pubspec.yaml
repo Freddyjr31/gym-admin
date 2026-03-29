@@ -1,7 +1,11 @@
 name: gym_admin
-description: "A new Flutter project."
+description: >
+  Aplicación de escritorio para Windows desarrollada en Flutter.
+  Permite gestionar recetas, ingredientes y costos de producción,
+  con una interfaz moderna basada en Fluent UI.
+
 publish_to: 'none'
-version: 0.1.0+0006
+version: 0.1.0+0007
 
 environment:
   sdk: ^3.11.0

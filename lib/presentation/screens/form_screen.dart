@@ -1,54 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gym_admin/core/helpers/show_content_dialog_dynamic.dart';
-import 'package:gym_admin/data/datasource/Local/recipe_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/recipe_cost_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/reipe.dart';
+import 'package:gym_admin/core/utils/Logs/log_service.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/recipe_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/recipe_cost_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/boxes.dart';
 import 'package:gym_admin/data/models/calculated_cost_model.dart';
 import 'package:gym_admin/data/models/data_to_calculated.dart';
+import 'package:gym_admin/presentation/models/form_state.dart';
 import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
 import 'package:gym_admin/presentation/providers/fixed_cost_provider.dart';
 import 'package:gym_admin/presentation/providers/recipe_calculator.dart';
 import 'package:provider/provider.dart';
-
-//* ==================== MODELOS LOCALES PARA EL FORMULARIO ITEMS ====================
-class SectionState {
-  final TextEditingController nameController;
-  final List<ItemState> items;
-
-  SectionState({String initialName = ''})
-      : nameController = TextEditingController(text: initialName),
-        items = [];
-}
-
-class ItemState {
-  final TextEditingController nameController;
-  final TextEditingController pkgCostController; // precio por kg (double)
-  final TextEditingController countController;   // cantidad (int)
-
-  ItemState()
-      : nameController = TextEditingController(),
-        pkgCostController = TextEditingController(),
-        countController = TextEditingController();
-}
-
-//* ==================== FIN MODELOS LOCALES PARA EL FORMULARIO PROTEINA PRINCIPAL ====================
-class PrincipalProtein {
-
-  final TextEditingController _shrinkagePercentageController;
-  final TextEditingController _proteinController;
-  final TextEditingController _buyWeightController;
-  final TextEditingController _buyKgWeightController;
-  final TextEditingController _weightPortionController;
-
-  PrincipalProtein({
-    String initialName = ''
-  }) : _proteinController = TextEditingController(text: initialName),
-        _buyWeightController = TextEditingController(),
-        _buyKgWeightController = TextEditingController(),
-        _shrinkagePercentageController = TextEditingController(),
-        _weightPortionController = TextEditingController();
-}
-
 
 //* Formulario de registro de nuevas recetas
 class RecipeFormScreen extends StatefulWidget {
@@ -64,7 +26,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
   //* controladores de texto para cada campo del formulario
   final _nameController = TextEditingController();
-
+  //* controladores de texto para cada proteina
   final  List<PrincipalProtein> _principalProtein = [];
 
   //* controladores costos fijos y margenes
@@ -80,16 +42,18 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   bool showCalculatedCost = false;
 
   //* estado para los datos calculados
-  // late Map<String, dynamic> recipe;
   late RecipeCalculation recipe;
 
   @override
   void initState() {
     super.initState();
-    _principalProtein.add(PrincipalProtein(initialName: "Pollo, Carne, Pescado..."));
-    // Por defecto: 2 secciones como pediste
-    _sections.add(SectionState(initialName: 'Marinado'));
-    _sections.add(SectionState(initialName: 'Relleno'));
+    //* por defecto añado items de cada modelo
+    _principalProtein.add(
+      PrincipalProtein(initialName: "Pollo, Carne, Pescado...")
+      );
+    _sections.add(
+      SectionState(initialName: 'Marinado')
+      );
   }
 
   @override
@@ -110,10 +74,10 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     }
 
     for (var principalProtein in _principalProtein) {
-      principalProtein._shrinkagePercentageController.dispose();
-      principalProtein._buyWeightController.dispose();
-      principalProtein._buyKgWeightController.dispose();
-      principalProtein._weightPortionController.dispose();
+      principalProtein.shrinkagePercentageController.dispose();
+      principalProtein.buyWeightController.dispose();
+      principalProtein.buyKgWeightController.dispose();
+      principalProtein.weightPortionController.dispose();
     }
     
     super.dispose();
@@ -196,11 +160,11 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
     final proteins = _principalProtein.map((protein) {
       return PrincipalProteinModel(
-        name: protein._proteinController.text.trim(),
-        buyWeight: double.tryParse(protein._buyWeightController.text.trim()) ?? 0.0, 
-        buyKgWeight: double.tryParse(protein._buyKgWeightController.text.trim()) ?? 0.0, 
-        shrikagepercentage: double.tryParse(protein._shrinkagePercentageController.text.trim()) ?? 0.0, 
-        weightPortionKg: double.tryParse(protein._weightPortionController.text.trim()) ?? 0.0,
+        name: protein.proteinController.text.trim(),
+        buyWeight: double.tryParse(protein.buyWeightController.text.trim()) ?? 0.0, 
+        buyKgWeight: double.tryParse(protein.buyKgWeightController.text.trim()) ?? 0.0, 
+        shrikagepercentage: double.tryParse(protein.shrinkagePercentageController.text.trim()) ?? 0.0, 
+        weightPortionKg: double.tryParse(protein.weightPortionController.text.trim()) ?? 0.0,
       );
     }).toList();
 
@@ -208,7 +172,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     
   }
 
-  // /// Función para construir el modelo de proteinas adicionales
+  /// Función para construir el modelo de proteinas adicionales
   List<MainIngredientCost> buildPrincipalProteinCostModel(RecipeCalculation recipeCostModel) {
 
     final List<MainIngredientCost> proteinsCost = recipeCostModel.mainIngredientResults.map((protein) {
@@ -377,7 +341,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Nombre de la proteína',
                                 child: TextFormBox(
-                                  controller: protein._proteinController,
+                                  controller: protein.proteinController,
                                   placeholder: 'Ej: Carne, Pollo, Pescado',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
@@ -407,7 +371,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Costo por kg',
                                 child: TextFormBox(
-                                  controller: protein._buyWeightController,
+                                  controller: protein.buyWeightController,
                                   placeholder: '1\$',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
@@ -418,7 +382,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Cantidad de Kg comprados', 
                                 child: TextFormBox(
-                                  controller: protein._buyKgWeightController,
+                                  controller: protein.buyKgWeightController,
                                   placeholder: '1',
                                   validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
                                 )
@@ -436,7 +400,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Porcentaje de merma',
                                 child: TextFormBox(
-                                  controller: protein._shrinkagePercentageController,
+                                  controller: protein.shrinkagePercentageController,
                                   placeholder: '10%',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
@@ -447,7 +411,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Peso por porción',
                                 child: TextFormBox(
-                                  controller: protein._weightPortionController,
+                                  controller: protein.weightPortionController,
                                   placeholder: '0.25',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
@@ -1071,6 +1035,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                           Navigator.pop(context);
                                         } else {
 
+                                          LoggerService.write('No se pudo guardar la receta');
+
                                           //* Mensaje de error si no esta montado el widget
                                           await displayInfoBar(context, builder: (context, close) {
                                             return InfoBar(
@@ -1103,7 +1069,6 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                       child: Text('Calcular costos'),
                     ),
                   ),
-
                 ],
               ),
             ],

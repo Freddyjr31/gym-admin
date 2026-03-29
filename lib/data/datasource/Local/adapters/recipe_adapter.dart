@@ -1,4 +1,4 @@
-import 'package:gym_admin/data/datasource/Local/recipe_cost_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/recipe_cost_adapter.dart';
 import 'package:hive/hive.dart';
 
 part 'recipe_adapter.g.dart';
