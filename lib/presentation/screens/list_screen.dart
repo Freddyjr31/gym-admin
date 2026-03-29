@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/data/datasource/Local/recipe_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/reipe.dart';
+import 'package:gym_admin/data/datasource/Local/adapters/recipe_adapter.dart';
+import 'package:gym_admin/data/datasource/Local/boxes.dart';
 import 'package:hive/hive.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';

@@ -15,7 +15,6 @@ void main() async {
 
   // Inicializamos el logger
   LoggerService.init();
-
   // Configuramos la captura de errores global
   FlutterError.onError = LoggerService.logFlutterError;
 

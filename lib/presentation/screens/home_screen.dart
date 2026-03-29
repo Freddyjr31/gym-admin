@@ -1,6 +1,7 @@
 
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:gym_admin/data/datasource/Local/boxes.dart';
 import 'package:gym_admin/presentation/widgets/form_fixed_cost.dart';
 import 'package:gym_admin/presentation/widgets/total_recipes_count.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -165,16 +166,49 @@ class _HomeScreenState extends State<HomeScreen> {
                         spacing: 8,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           DefaultTextStyle(
                             style: FluentTheme.of(context).typography.title!,
                             textAlign: TextAlign.start,
-                            child: const Text('Gastos fijos'),
+                            child: Text('Gastos fijos: ${fixedCostBox.length}'),
                           ),
+
+                          /// Lista para mostrar los gastos fijos registrados
+                          fixedCostBox.length == 0 ? const Text('No hay gastos fijos registrados') : 
+                          Expanded(
+                            flex: 1,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                spacing: 8,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const AlwaysScrollableScrollPhysics(),
+                                    itemCount: fixedCostBox.length,
+                                    itemBuilder: (context, index) {
+                                      final fixedCost = fixedCostBox.getAt(index);
+                                      return ListTile(
+                                        title: Text(fixedCost?.fixedCostItems.map((e) => e.nameCost).join(', ') ?? 'Gasto fijo ${index + 1}'),
+                                        subtitle: Text('Costo total: \$${fixedCost?.fixedCostItems.fold(0, (sum, item) => sum + item.cost).toStringAsFixed(2) ?? '0.00'}'),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
+                            )),
+
+                          const SizedBox(height: 10),
+                          const Divider(),
+                          const SizedBox(height: 10),
                                       
                           //* Total de recetas
                           Expanded(
+                            flex: 2,
                             child: SingleChildScrollView(
-                              child: FormFixedCost())),
+                              child: FormFixedCost()
+                              )
+                            ),
                         ],
                       ),
                     ),
