@@ -708,13 +708,16 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                             usdExchangeRate: exchangeRateProvider.getExchangeRate()
                           );
 
+                          debugPrint('Costo por Kg de la primera proteína: ${principalProteins[0].buyWeight}');
+                          debugPrint('cantidad de Kg comprados de la primera proteína: ${principalProteins[0].buyKgWeight}');
+
                           RecipeCalculation calculatedCost = calculator.calculateRecipeCosts(
                             RecipeRequestModel(
                               recipeName: recipeModel.name,
                               mainIngredients: principalProteins.map((item) => MainIngredient(
                                 name: item.name,
-                                purchaseWeightKg: item.buyWeight,
-                                purchasePricePerKg: item.buyKgWeight,
+                                purchaseWeightKg: item.buyKgWeight,
+                                purchasePricePerKg: item.buyWeight,
                                 wastePercentage: item.shrikagepercentage,
                                 weightPerPortionKg: item.weightPortionKg
                               )).toList(),
@@ -891,7 +894,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                                     style: FluentTheme.of(context).typography.bodyStrong,
                                                     children: [
                                                       TextSpan(
-                                                        text: item.portion.weightUsedKg.toString(),
+                                                        text: "${item.portion.weightUsedKg.toInt().toString()} porciones",
                                                         style: FluentTheme.of(context).typography.body,
                                                       )
                                                     ]
@@ -953,11 +956,30 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
                                     RichText(
                                       text: TextSpan(
-                                        text: 'Costo total de la receta: ',
+                                        text: 'Gastos Fijos por Unidad: ',
                                         style: FluentTheme.of(context).typography.bodyStrong,
                                         children: [
                                           TextSpan(
-                                            text: calculatedCost.economicSummary.suggestedSalesPrice.toString(),
+                                            text: calculatedCost.economicSummary.unitFixedExpenses.toString(),
+                                            style: FluentTheme.of(context).typography.body,
+                                          )
+                                        ]
+                                      ),
+                                    ),
+
+                                    //* BUSSINES MAINTENCE
+                                    Text(
+                                      'Mantenimiento del negocio',
+                                      style: FluentTheme.of(context).typography.subtitle,
+                                    ),
+
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'Gastos generales: ',
+                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                        children: [
+                                          TextSpan(
+                                            text: calculatedCost.businessMaintenance.monthlyFixedExpenses.toString(),
                                             style: FluentTheme.of(context).typography.body,
                                           )
                                         ]
@@ -966,12 +988,38 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
                                     RichText(
                                       text: TextSpan(
-                                        text: 'Gastos Fijos por Unidad: ',
+                                        text: 'Ganancia: ',
                                         style: FluentTheme.of(context).typography.bodyStrong,
                                         children: [
                                           TextSpan(
-                                            text: calculatedCost.economicSummary.unitFixedExpenses.toString(),
+                                            text: calculatedCost.businessMaintenance.netProfitPerUnit.toString(),
                                             style: FluentTheme.of(context).typography.body,
+                                          )
+                                        ]
+                                      ),
+                                    ),
+
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'Cantidad minima de venta: ',
+                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                        children: [
+                                          TextSpan(
+                                            text: calculatedCost.businessMaintenance.unitsForBreakEven.toString(),
+                                            style: FluentTheme.of(context).typography.body,
+                                          )
+                                        ]
+                                      ),
+                                    ),
+
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'Costo total de la receta: ',
+                                        style: FluentTheme.of(context).typography.title,
+                                        children: [
+                                          TextSpan(
+                                            text: calculatedCost.economicSummary.suggestedSalesPrice.toString(),
+                                            style: FluentTheme.of(context).typography.title!.copyWith(color: Colors.green),
                                           )
                                         ]
                                       ),

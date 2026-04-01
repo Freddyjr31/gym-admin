@@ -79,7 +79,7 @@ class _FormFixedCostState extends State<FormFixedCost> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Costos Fijos', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    const Text('Agregar Costos Fijos', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     // Botón para añadir costos fijos
                     FilledButton(
@@ -157,27 +157,27 @@ class _FormFixedCostState extends State<FormFixedCost> {
                     Button(
                       child: const Text('Guardar gastos'),
                       onPressed: () async {
+
                         if (_formKey.currentState!.validate()) {
         
                           //* sumar los costos
                           double totalCost = 0;
+                          //* obtener la tasa de cambio
                           double exchangeRate = exchangeRateProvider.getExchangeRate();
-        
+                          log( 'Tasa de cambio: $exchangeRate' );
+
+                          //* sumar los costos ingresados en el formulario
                           for (var cost in _fixedCostList) {
                             totalCost += double.parse(cost._costController.text);
                           }
-        
-                          log( 'Costo total: $totalCost bs/usds' );
-        
-                          double totalAllCost = fixedCostProvider.calculatedFixedCost(
+
+                          double totalAllCostForm = fixedCostProvider.calculatedFixedCost(
                             totalCost, 
                             exchangeRate
                           );
-        
-                          fixedCostProvider.setFixedCost(totalAllCost);
-                          log( 'Tasa de cambio: $exchangeRate' );
-                          log( 'Costo total: $totalAllCost' );
-        
+                          log( 'Costo total a guardar: $totalAllCostForm' );
+                          
+                          //* guardar los datos en Hive
                           for (var cost in _fixedCostList) {
                             await fixedCostBox.add(
                                 FixedCostAdapter(
@@ -193,15 +193,23 @@ class _FormFixedCostState extends State<FormFixedCost> {
 
                           //* los datos de la caja de gastos fijos
                           log('Datos de la caja de gastos fijos:');
+                          double sumatoryCostInBox = 0;
                           for (var i = 0; i < fixedCostBox.length; i++) {
                             final item = fixedCostBox.getAt(i);
                             log('Gasto fijo ${i + 1}: ${item?.fixedCostItems.map((e) => 'Nombre: ${e.nameCost}, Costo: ${e.cost}').join(', ')}');
+                            //* sumar los costos de cada item en la caja
+                            sumatoryCostInBox += item?.fixedCostItems.fold(0, (sum, item) => sum + item.cost) ?? 0;
                           }
+
+                          log('Costo total sumado desde la caja: $sumatoryCostInBox');
+                          //* calcular el costo total con la tasa de cambio y guardar el resultado en el provider
+                          double totalAllCostHive = fixedCostProvider.calculatedFixedCost(sumatoryCostInBox, exchangeRate);
+                          fixedCostProvider.setFixedCost(totalAllCostHive);
         
                           await displayInfoBar(context, builder: (context, close) {
                               return InfoBar(
-                                title: const Text('Gastos calculados'),
-                                content: Text('Costo total: $totalAllCost'),
+                                title: const Text('Gastos calculados ingresados correctamente'),
+                                content: Text('Costo total: $totalAllCostForm'),
                                 action: IconButton(
                                   icon: const WindowsIcon(WindowsIcons.check_mark),
                                   onPressed: () => Navigator.pop(context),
@@ -209,6 +217,8 @@ class _FormFixedCostState extends State<FormFixedCost> {
                                 severity: InfoBarSeverity.success,
                               );
                             });
+
+                          setState(() {});
                         
                         }
                       },

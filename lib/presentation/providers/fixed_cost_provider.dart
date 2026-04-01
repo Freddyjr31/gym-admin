@@ -20,11 +20,6 @@ class FixedCostProvider extends ChangeNotifier{
     double totalCost, 
     double exchangeRate
     ){
-
-      debugPrint('Total cost: $totalCost');
-      debugPrint("Exchange rate: $exchangeRate");
-      debugPrint("Total cost: ${totalCost * exchangeRate}");
-
     return totalCost * exchangeRate;
   }
 
