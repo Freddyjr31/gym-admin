@@ -8,7 +8,7 @@ import 'package:gym_admin/data/models/data_to_calculated.dart' hide AdditionalSe
 
 /// Clase que representa un monto en dos monedas
 class Amount {
-  final int bs;
+  final double bs;
   final double usd;
 
   Amount({required this.bs, required this.usd});
@@ -33,11 +33,13 @@ class RecipeCalculator {
   });
 
 
-  /// Helper para crear el objeto de monto doble
+  /// Helper para crear el objeto de monto double
+  /// value: valor en bolívares
   Amount _getAmount(double value) {
     return Amount(
-      bs: value.round(),
-      usd: double.parse((value / usdExchangeRate).toStringAsFixed(2)),
+      bs: double.parse((value * usdExchangeRate).toStringAsFixed(2)),
+      // usd: double.parse((value / usdExchangeRate).toStringAsFixed(2)),
+      usd: double.parse(value.toStringAsFixed(2)),
     );
   }
 
@@ -49,10 +51,20 @@ class RecipeCalculator {
     double totalMainIngredientsCost = 0;
     
     List<MainIngredientResult> mainIngredientsResults = (input.mainIngredients).map((ing) {
+      
+      debugPrint('pruchaseWeightKg: ${ing.purchaseWeightKg}');
+      debugPrint('purchasePricePerKg: ${ing.purchasePricePerKg}');
+      debugPrint('wastePercentage: ${ing.wastePercentage}');
+      debugPrint('weightPerPortionKg: ${ing.weightPerPortionKg}');
 
       double totalPurchaseCost = ing.purchaseWeightKg * ing.purchasePricePerKg;
-      double usableWeight = ing.purchaseWeightKg * (1 - ing.wastePercentage);
+      double usableWeight = ing.purchaseWeightKg - ((ing.wastePercentage * ing.purchaseWeightKg) / 100);
       double realPricePerKg = totalPurchaseCost / usableWeight;
+      
+      debugPrint('totalPurchaseCost: $totalPurchaseCost');
+      debugPrint('usableWeight: $usableWeight');
+      debugPrint('realPricePerKg: $realPricePerKg');
+
       double portionCost = ing.weightPerPortionKg * realPricePerKg;
 
       totalMainIngredientsCost += portionCost;
@@ -76,12 +88,13 @@ class RecipeCalculator {
       name: ing.name,
       wasteCalculations: WasteCalculations(
         initialWeightKg: ing.purchaseWeightKg,
-        wastePercentage: (ing.wastePercentage * 100).toDouble(),
+        wastePercentage: (ing.wastePercentage).toDouble(),
         usableWeightKg: double.parse(usableWeight.toStringAsFixed(3)),
         realPricePerKg: _getAmount(realPricePerKg),
       ),
       portion: Portion(
-        weightUsedKg: ing.weightPerPortionKg,
+        // weightUsedKg: ing.weightPerPortionKg,
+        weightUsedKg: double.parse((usableWeight / ing.weightPerPortionKg).toStringAsFixed(2)),
         cost: _getAmount(portionCost),
       ),
     );
@@ -135,22 +148,34 @@ class RecipeCalculator {
     
     // Costo base: Proteínas + Adicionales + Pan
     double baseIngredientsCost = totalMainIngredientsCost + totalAdditionalCost + fixed.breadUnit;
-    
+    debugPrint('baseIngredientsCost: $baseIngredientsCost');
+
     // Utilidad bruta
-    double profitAmount = baseIngredientsCost * fixed.desiredProfitPercentage;
+    // double profitAmount = baseIngredientsCost * fixed.desiredProfitPercentage;
+    // debugPrint('GANANCIAS ESPERADAS: profitAmount: $profitAmount');
     
     // Gastos fijos por unidad
     double unitFixedCosts = fixed.operatingCost + fixed.packagingUnit;
 
-    double finalSalesPrice = baseIngredientsCost + profitAmount + unitFixedCosts;
+    /// Costo total
+    double finalSalesPrice = baseIngredientsCost + unitFixedCosts;
+    debugPrint('finalSalesPrice: $finalSalesPrice');
 
-    // 4. MANTENIMIENTO (Punto de Equilibrio)
-    // Ganancia limpia por cada unidad vendida
-    double netProfitPerUnit = finalSalesPrice.ceilToDouble() - (baseIngredientsCost + unitFixedCosts);
-    int breakEvenUnits = (monthlyFixedExpenses / netProfitPerUnit).ceil();
+    double netProfitPerUnit = (finalSalesPrice * fixed.desiredProfitPercentage) / 100;
+    debugPrint('netProfitPerUnit: $netProfitPerUnit');
+
+    //* 4. MANTENIMIENTO (Punto de Equilibrio)
+    //* Ganancia limpia por cada unidad vendida
+    // double netProfitPerUnit = (finalSalesPrice * expectedAmountToHave) / 100;
+    debugPrint('netProfitPerUnit: $netProfitPerUnit');
+    debugPrint('unitFixedCosts: $unitFixedCosts');
+    //* cantidad minima
+    int breakEvenUnits = (monthlyFixedExpenses / netProfitPerUnit).toInt(); //* cantidad de unidades a vender para cubrir los gastos generales (punto de equilibrio)
+    debugPrint('breakEvenUnits: $breakEvenUnits');
 
     log("Tasa de cambio: $usdExchangeRate");
     log("Gastos mensuales: $monthlyFixedExpenses");
+    
     // RETORNO DEL MAPA ESTRUCTURADO
     // return {
     //   'recipeName': input['recipeName'],
@@ -176,10 +201,10 @@ class RecipeCalculator {
       mainIngredientResults: mainIngredientsResults,
       additionalSections: additionalSectionsResults, 
       economicSummary: EconomicSummary(
-        expectedProfit: _getAmount(profitAmount).toString(),
+        expectedProfit: _getAmount(netProfitPerUnit).toString(),
         totalIngredientsCost: _getAmount(baseIngredientsCost).toString(),
         unitFixedExpenses: _getAmount(unitFixedCosts).toString(),
-        suggestedSalesPrice: _getAmount(finalSalesPrice.ceilToDouble()).toString(),
+        suggestedSalesPrice: _getAmount(finalSalesPrice).toString(),
       ),
       businessMaintenance: BusinessMaintenance( //* agregar esto a la base de datosNO ESTA Y ALI ME GRITO
         monthlyFixedExpenses: _getAmount(monthlyFixedExpenses).toString(), //* gastos generales

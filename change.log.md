@@ -2,6 +2,19 @@
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
 
+## [1.0.0+008] - 2026-04-01 FreddyJr31
+
+- [APP] - Ajuste en funcion de calcular recetas.
+- [APP] - Mostrar calculos de gastos fijos.
+- [APP] - Pedir tasa del dolar si esta es 0.
+- [APP] - Mostrar datos de BussinesMaintenance en el modal de calculo.
+- [APP] - Sumatoria de gastos fijos al guardarlos.
+
+## [1.0.0+007] - 2026-03-28 FreddyJr31
+
+- [APP] - Adaptador para la caje de fixedCost.
+- [APP] - Estados de Formulario desacoplados.
+
 ## [1.0.0+006] - 2026-03-28 FreddyJr31
 
 - [APP] - Nueva clase para registro de logs internos .
