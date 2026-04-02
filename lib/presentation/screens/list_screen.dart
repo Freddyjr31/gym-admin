@@ -259,7 +259,7 @@ class ListScreenState extends State<ListScreen> {
                                               ),
                                               children: <TextSpan>[
                                                 TextSpan(
-                                                  text: '${protein.buyKgWeight} Bs',
+                                                  text: '${protein.buyKgWeight} \$',
                                                   style: TextStyle(
                                                     color: Colors.green.lightest,
                                                     fontWeight: FontWeight.normal
@@ -381,7 +381,7 @@ class ListScreenState extends State<ListScreen> {
                                                           ),
                                                           children: <TextSpan>[
                                                             TextSpan(
-                                                              text: '${item.kgCost} Bs',
+                                                              text: '${item.kgCost} \$',
                                                               style: TextStyle(
                                                                 color: Colors.green.lightest,
                                                                 fontWeight: FontWeight.normal

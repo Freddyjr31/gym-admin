@@ -51,7 +51,7 @@ class Portion {
   factory Portion.fromJson(Map<String, dynamic> json) => Portion(
     // Conversión segura a double por si el JSON trae un entero
     weightUsedKg: (json['weightUsedKg'] as num).toDouble(),
-    cost: json['cost'] ?? '0 Bs.',
+    cost: json['cost'] ?? '0 \$.',
   );
 
   Map<String, dynamic> toJson() => {
@@ -126,10 +126,10 @@ class EconomicSummary {
   });
 
   factory EconomicSummary.fromJson(Map<String, dynamic> json) => EconomicSummary(
-    totalIngredientsCost: json['totalIngredientsCost'] ?? '0 Bs.',
-    expectedProfit: json['expectedProfit'] ?? '0 Bs.',
-    unitFixedExpenses: json['unitFixedExpenses'] ?? '0 Bs.',
-    suggestedSalesPrice: json['suggestedSalesPrice'] ?? '0 Bs.',
+    totalIngredientsCost: json['totalIngredientsCost'] ?? '0 \$',
+    expectedProfit: json['expectedProfit'] ?? '0 \$',
+    unitFixedExpenses: json['unitFixedExpenses'] ?? '0 \$',
+    suggestedSalesPrice: json['suggestedSalesPrice'] ?? '0 \$',
   );
 }
 
@@ -145,8 +145,8 @@ class BusinessMaintenance {
   });
 
   factory BusinessMaintenance.fromJson(Map<String, dynamic> json) => BusinessMaintenance(
-    monthlyFixedExpenses: json['monthlyFixedExpenses'] ?? '0 Bs.',
-    netProfitPerUnit: json['netProfitPerUnit'] ?? '0 Bs.',
+    monthlyFixedExpenses: json['monthlyFixedExpenses'] ?? '0 \$',
+    netProfitPerUnit: json['netProfitPerUnit'] ?? '0 \$',
     unitsForBreakEven: json['unitsForBreakEven'] is int 
         ? json['unitsForBreakEven'] 
         : (json['unitsForBreakEven'] as double).toInt(),
