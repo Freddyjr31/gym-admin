@@ -357,7 +357,7 @@ class ListScreenState extends State<ListScreen> {
                                                       const SizedBox(width: 2),
                                                       RichText(
                                                         text: TextSpan(
-                                                          text: 'Cantidad: ',
+                                                          text: 'Cantidad usada: ',
                                                           style: TextStyle(
                                                             color: Colors.white.withAlpha(100),
                                                           ),
@@ -390,9 +390,6 @@ class ListScreenState extends State<ListScreen> {
                                                           ],
                                                         ),
                                                       ),
-                                                      
-                                                  
-                                                      
                                                     ],
                                                   ),
                                                 ),
@@ -401,10 +398,11 @@ class ListScreenState extends State<ListScreen> {
                                             )
                                             ),
 
-                                            const SizedBox(height: 10),
-                                            const Divider(),
-                                            const SizedBox(height: 5),
-                                          
+                                            if(index != recipeModel.additionalsingredients!.sections.length - 1) ...[
+                                              const SizedBox(height: 5),
+                                              const Divider(),
+                                              const SizedBox(height: 5),
+                                            ]
                                           ],
                                         ),
                                       );

@@ -179,7 +179,7 @@ class ItemsSectionsAdapter extends TypeAdapter<ItemsSections> {
     return ItemsSections(
       name: fields[0] as String,
       kgCost: fields[1] as double,
-      count: fields[2] as int,
+      count: fields[2] as double,
     );
   }
 

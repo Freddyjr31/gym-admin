@@ -134,7 +134,7 @@ class ItemsSections {
   @HiveField(1)
   final double kgCost;
   @HiveField(2)
-  final int count;
+  final double count;
 
   ItemsSections({
     required this.name,
