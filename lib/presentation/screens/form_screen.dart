@@ -575,7 +575,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                     flex: 2,
                                     child: TextFormBox(
                                       controller: item.pkgCostController,
-                                      placeholder: 'Precio/kg',
+                                      placeholder: 'Precio',
                                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                     ),
                                   ),
@@ -586,7 +586,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                     flex: 2,
                                     child: TextFormBox(
                                       controller: item.countController,
-                                      placeholder: 'Cantidad (kg)',
+                                      placeholder: 'Cantidad usada (kg)',
                                       keyboardType: TextInputType.number,
                                     ),
                                   ),
@@ -749,8 +749,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               context,
                               ContentDialog(
                                 title: Column(
-                                  spacing: 4,
-                                  mainAxisSize: MainAxisSize.min,
+                                  spacing: 8,
+                                  mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -767,7 +767,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                         ),
                                       ]
                                     ),
-
+                              
                                     RichText(
                                       text: TextSpan(
                                         text: 'Tasa de cambio: ',
@@ -780,258 +780,273 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                         ]
                                       ),
                                     ),
-
+                              
                                   ],
                                 ) ,
-                                content: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  spacing: 4,
-                                  children: [
-
-                                    const Divider(),
-
-                                    Text(
-                                      'Ingredientes principales',
-                                      style: FluentTheme.of(context).typography.subtitle,
-                                    ),
-
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: calculatedCost.mainIngredientResults.length,
-                                      itemBuilder: (context, index) {
-
-                                        final item = calculatedCost.mainIngredientResults[index];
-
-                                        return Container(
-                                          margin: const EdgeInsets.only(bottom: 8),
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(10)
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              RichText(
-                                                  text: TextSpan(
-                                                  text: 'Proteina: ',
-                                                  style: FluentTheme.of(context).typography.bodyStrong,
-                                                  children: [
-                                                    TextSpan(
-                                                      text: item.name,
-                                                      style: FluentTheme.of(context).typography.bodyStrong,
-                                                    )
-                                                  ]
-                                                )),
-                                          
-                                                Text('Cálculo de merma:'),
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: 'Peso inicial: ',
-                                                    style: FluentTheme.of(context).typography.bodyStrong,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: '${item.wasteCalculations.initialWeightKg.toString()} Kg',
-                                                        style: FluentTheme.of(context).typography.body,
-                                                      )
-                                                    ]
-                                                  ),
-                                                ),
-                                          
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: '% merma: ',
-                                                    style: FluentTheme.of(context).typography.bodyStrong,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: '${item.wasteCalculations.wastePercentage.toString()} %',
-                                                        style: FluentTheme.of(context).typography.body,
-                                                      )
-                                                    ]
-                                                  ),
-                                                ),
-                                          
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: 'Peso útil: ',
-                                                    style: FluentTheme.of(context).typography.bodyStrong,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: '${item.wasteCalculations.usableWeightKg.toString()} Kg',
-                                                        style: FluentTheme.of(context).typography.body,
-                                                      )
-                                                    ]
-                                                  ),
-                                                ),
-                                          
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: 'Precio Real: ',
-                                                    style: FluentTheme.of(context).typography.bodyStrong,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: item.wasteCalculations.realPricePerKg.toString(),
-                                                        style: FluentTheme.of(context).typography.body,
-                                                      )
-                                                    ]
-                                                  ),
-                                                ),
-                                          
-                                                //* =============== Porció utilizada
-                                          
-                                                Text(
-                                                  'Porción utilizada',
-                                                  style: FluentTheme.of(context).typography.bodyStrong,
-                                                ),
-                                          
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: 'Cantidad: ',
-                                                    style: FluentTheme.of(context).typography.bodyStrong,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: "${item.portion.weightUsedKg.toInt().toString()} porciones",
-                                                        style: FluentTheme.of(context).typography.body,
-                                                      )
-                                                    ]
-                                                  ),
-                                                ),
-                                          
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: 'Costo Porción: ',
-                                                    style: FluentTheme.of(context).typography.bodyStrong,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: item.portion.cost.toString(),
-                                                        style: FluentTheme.of(context).typography.body,
-                                                      )
-                                                    ]
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        );
-                                      }
-                                    ),
-
-                                    //* =============== RESUMEN DE COSTOS
-
-                                    const Divider(),
-
-                                    Text(
-                                      'Resumen de costos',
-                                      style: FluentTheme.of(context).typography.subtitle,
-                                    ),
-
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Costo total ingredientes: ',
-                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                        children: [
-                                          TextSpan(
-                                            text: calculatedCost.economicSummary.totalIngredientsCost.toString(),
-                                            style: FluentTheme.of(context).typography.body,
-                                          )
-                                        ]
-                                      ),
-                                    ),
-
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Ganancia esperada: ',
-                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                        children: [
-                                          TextSpan(
-                                            text: calculatedCost.economicSummary.expectedProfit.toString(),
-                                            style: FluentTheme.of(context).typography.body,
-                                          )
-                                        ]
-                                      ),
-                                    ),
-
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Gastos Fijos por Unidad: ',
-                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                        children: [
-                                          TextSpan(
-                                            text: calculatedCost.economicSummary.unitFixedExpenses.toString(),
-                                            style: FluentTheme.of(context).typography.body,
-                                          )
-                                        ]
-                                      ),
-                                    ),
-
-                                    //* BUSSINES MAINTENCE
-                                    Text(
-                                      'Mantenimiento del negocio',
-                                      style: FluentTheme.of(context).typography.subtitle,
-                                    ),
-
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Gastos generales: ',
-                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                        children: [
-                                          TextSpan(
-                                            text: calculatedCost.businessMaintenance.monthlyFixedExpenses.toString(),
-                                            style: FluentTheme.of(context).typography.body,
-                                          )
-                                        ]
-                                      ),
-                                    ),
-
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Ganancia: ',
-                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                        children: [
-                                          TextSpan(
-                                            text: calculatedCost.businessMaintenance.netProfitPerUnit.toString(),
-                                            style: FluentTheme.of(context).typography.body,
-                                          )
-                                        ]
-                                      ),
-                                    ),
-
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Cantidad minima de venta: ',
-                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                        children: [
-                                          TextSpan(
-                                            text: calculatedCost.businessMaintenance.unitsForBreakEven.toString(),
-                                            style: FluentTheme.of(context).typography.body,
-                                          )
-                                        ]
-                                      ),
-                                    ),
-
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Costo total de la receta: ',
-                                        style: FluentTheme.of(context).typography.title,
-                                        children: [
-                                          TextSpan(
-                                            text: calculatedCost.economicSummary.suggestedSalesPrice.toString(),
-                                            style: FluentTheme.of(context).typography.title!.copyWith(color: Colors.green),
-                                          )
-                                        ]
-                                      ),
-                                    ),
+                                content: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: SizedBox(
+                                    width: size.width * 0.8,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      spacing: 4,
+                                      children: [
                                     
-                                  ]),
+                                        const Divider(),
+                                    
+                                        Text(
+                                          'Ingredientes principales',
+                                          style: FluentTheme.of(context).typography.subtitle,
+                                        ),
+                                    
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: calculatedCost.mainIngredientResults.length,
+                                          itemBuilder: (context, index) {
+                                    
+                                            final item = calculatedCost.mainIngredientResults[index];
+                                    
+                                            return Container(
+                                              margin: const EdgeInsets.only(bottom: 8),
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.withOpacity(0.8),
+                                                borderRadius: BorderRadius.circular(10)
+                                              ),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  RichText(
+                                                      text: TextSpan(
+                                                      text: 'Proteina: ',
+                                                      style: FluentTheme.of(context).typography.bodyStrong,
+                                                      children: [
+                                                        TextSpan(
+                                                          text: item.name,
+                                                          style: FluentTheme.of(context).typography.bodyStrong,
+                                                        )
+                                                      ]
+                                                    )),
+                                              
+                                                    Text('Cálculo de merma:'),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: 'Peso inicial: ',
+                                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                                        children: [
+                                                          TextSpan(
+                                                            text: '${item.wasteCalculations.initialWeightKg.toString()} Kg',
+                                                            style: FluentTheme.of(context).typography.body,
+                                                          )
+                                                        ]
+                                                      ),
+                                                    ),
+                                              
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: '% merma: ',
+                                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                                        children: [
+                                                          TextSpan(
+                                                            text: '${item.wasteCalculations.wastePercentage.toString()} %',
+                                                            style: FluentTheme.of(context).typography.body,
+                                                          )
+                                                        ]
+                                                      ),
+                                                    ),
+                                              
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: 'Peso útil: ',
+                                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                                        children: [
+                                                          TextSpan(
+                                                            text: '${item.wasteCalculations.usableWeightKg.toString()} Kg',
+                                                            style: FluentTheme.of(context).typography.body,
+                                                          )
+                                                        ]
+                                                      ),
+                                                    ),
+                                              
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: 'Precio Real: ',
+                                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                                        children: [
+                                                          TextSpan(
+                                                            text: item.wasteCalculations.realPricePerKg.toString(),
+                                                            style: FluentTheme.of(context).typography.body,
+                                                          )
+                                                        ]
+                                                      ),
+                                                    ),
+                                              
+                                                    //* =============== Porció utilizada
+                                              
+                                                    Text(
+                                                      'Porción utilizada',
+                                                      style: FluentTheme.of(context).typography.bodyStrong,
+                                                    ),
+                                              
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: 'Cantidad de porcines posibles: ',
+                                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                                        children: [
+                                                          TextSpan(
+                                                            text: "${item.portion.weightUsedKg.toInt().toString()} porciones",
+                                                            style: FluentTheme.of(context).typography.body,
+                                                          )
+                                                        ]
+                                                      ),
+                                                    ),
+                                              
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: 'Costo Porción: ',
+                                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                                        children: [
+                                                          TextSpan(
+                                                            text: item.portion.cost.toString(),
+                                                            style: FluentTheme.of(context).typography.body,
+                                                          )
+                                                        ]
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        ),
+                                    
+                                        //* =============== RESUMEN DE COSTOS
+                                    
+                                        const Divider(),
+                                    
+                                        Text(
+                                          'Resumen de costos',
+                                          style: FluentTheme.of(context).typography.subtitle,
+                                        ),
+                                    
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Costo total ingredientes: ',
+                                            style: FluentTheme.of(context).typography.bodyStrong,
+                                            children: [
+                                              TextSpan(
+                                                text: calculatedCost.economicSummary.totalIngredientsCost.toString(),
+                                                style: FluentTheme.of(context).typography.body,
+                                              )
+                                            ]
+                                          ),
+                                        ),
+                                    
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Ganancia esperada: ',
+                                            style: FluentTheme.of(context).typography.bodyStrong,
+                                            children: [
+                                              TextSpan(
+                                                text: calculatedCost.economicSummary.expectedProfit.toString(),
+                                                style: FluentTheme.of(context).typography.body,
+                                              )
+                                            ]
+                                          ),
+                                        ),
+                                    
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Gastos Fijos por Unidad: ',
+                                            style: FluentTheme.of(context).typography.bodyStrong,
+                                            children: [
+                                              TextSpan(
+                                                text: calculatedCost.economicSummary.unitFixedExpenses.toString(),
+                                                style: FluentTheme.of(context).typography.body,
+                                              )
+                                            ]
+                                          ),
+                                        ),
+                                    
+                                        const SizedBox(height: 8),
+                                        const Divider(),
+                                    
+                                        //* BUSSINES MAINTENCE
+                                        Text(
+                                          'Mantenimiento del negocio',
+                                          style: FluentTheme.of(context).typography.subtitle,
+                                        ),
+                                    
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Gastos generales: ',
+                                            style: FluentTheme.of(context).typography.bodyStrong,
+                                            children: [
+                                              TextSpan(
+                                                text: calculatedCost.businessMaintenance.monthlyFixedExpenses.toString(),
+                                                style: FluentTheme.of(context).typography.body,
+                                              )
+                                            ]
+                                          ),
+                                        ),
+                                    
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Ganancia: ',
+                                            style: FluentTheme.of(context).typography.bodyStrong,
+                                            children: [
+                                              TextSpan(
+                                                text: calculatedCost.businessMaintenance.netProfitPerUnit.toString(),
+                                                style: FluentTheme.of(context).typography.body,
+                                              )
+                                            ]
+                                          ),
+                                        ),
+                                    
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Cantidad minima de venta: ',
+                                            style: FluentTheme.of(context).typography.bodyStrong,
+                                            children: [
+                                              TextSpan(
+                                                text: calculatedCost.businessMaintenance.unitsForBreakEven.toString(),
+                                                style: FluentTheme.of(context).typography.body,
+                                              )
+                                            ]
+                                          ),
+                                        ),
+                                    
+                                        Row(
+                                          spacing: 8,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Total: ",
+                                              style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            Text(
+                                              calculatedCost.economicSummary.suggestedSalesPrice.toString(),
+                                              style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                fontSize: 18,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        
+                                      ]),
+                                  ),
+                                ),
                                 actions: [
                                   FilledButton(
                                     child: const Text('Guardar receta'),
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-
+                              
                                         final additionalIngredients = buildAdditionalIngredientsModel();
                                         final additionalSectionCost = buildAdditionalSectionCostModel(calculatedCost);
                                         final principalProteinCost = buildPrincipalProteinCostModel(calculatedCost);
@@ -1060,13 +1075,13 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                             )
                                           )
                                         );
-
+                              
                                         //* Guarda la receta en la "caja"
                                         await recipeBox.add(recipeModel);
-
+                              
                                         //* Si esta montado el widget muestra el snackbar
                                         if (mounted) {
-
+                              
                                           await displayInfoBar(context, builder: (context, close) {
                                             return InfoBar(
                                               title: const Text('Receta guardada'),
@@ -1079,12 +1094,12 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                               severity: InfoBarSeverity.success,
                                             );
                                           });
-
+                              
                                           Navigator.pop(context);
                                         } else {
-
+                              
                                           LoggerService.write('No se pudo guardar la receta');
-
+                              
                                           //* Mensaje de error si no esta montado el widget
                                           await displayInfoBar(context, builder: (context, close) {
                                             return InfoBar(
@@ -1101,7 +1116,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                       }
                                     },
                                   ),
-
+                              
                                   Button(
                                     child: const Text('Cerrar'),
                                     onPressed: () {

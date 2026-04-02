@@ -89,6 +89,7 @@ class ListScreenState extends State<ListScreen> {
           child: AnimatedList(
             key: _listKey,
             initialItemCount: recipeBox.length,
+            physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index, animation) {
               final recipeModel = recipeBox.getAt(index);
 
@@ -118,21 +119,6 @@ class ListScreenState extends State<ListScreen> {
       principalProteins += '${element.name}, ';
     }
     principalProteins = principalProteins.substring(0, principalProteins.length - 2);
-
-    //* obtener valor de la suma para el costo del platillo
-    double recipeCostBS = 
-        (
-          double.parse(recipeModel.recipeCostModel!.economicSummary.totalIngredientsCost.split("Bs.").first.trim()) + 
-          double.parse(recipeModel.recipeCostModel!.economicSummary.unitFixedExpenses.split("Bs.").first.trim())
-        ) * recipeModel.recipeCostModel!.exchangeRate;
-
-    double recipeCostUSD =
-      double.parse(
-        recipeModel.recipeCostModel!.economicSummary.totalIngredientsCost.split("Bs.").first.trim()
-        ) +
-      double.parse(
-        recipeModel.recipeCostModel!.economicSummary.unitFixedExpenses.split("Bs.").first.trim()
-        );
 
     return SizeTransition(
       sizeFactor: animation,
@@ -179,6 +165,7 @@ class ListScreenState extends State<ListScreen> {
                         ],
                       ),
                     ),
+
                     RichText(
                       text: TextSpan(
                         text: 'Costo: ',
@@ -187,7 +174,7 @@ class ListScreenState extends State<ListScreen> {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: "${recipeCostUSD.toStringAsFixed(2)} USD/${recipeCostBS.toStringAsFixed(2)} Bs.",
+                            text: recipeModel.recipeCostModel!.economicSummary.suggestedSalesPrice.toString(),
                             style: TextStyle(
                               color: Colors.green.lightest,
                               fontWeight: FontWeight.normal
@@ -213,11 +200,394 @@ class ListScreenState extends State<ListScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
+                      spacing: 8,
                       children: [
-                        //* Contenido de la receta
-                        
-                        Text("Contenido de la receta", style: FluentTheme.of(context).typography.subtitle),
 
+                        Card(
+                          padding: const EdgeInsets.all(8.0),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 5,
+                            children: [
+                              
+                              //* Contenido de la receta
+                              Text('Proteinas principales:', style: FluentTheme.of(context).typography.title),
+                            
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.white.withAlpha(50)),
+                                ),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: recipeModel.principalProtein.length,
+                                  itemBuilder: (context, index) {
+                                    final protein = recipeModel.principalProtein[index];
+                                    return ListTile(
+                                      title: Text(protein.name, style: FluentTheme.of(context).typography.subtitle),
+                                      subtitle: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        spacing: 8,
+                                        children: [
+                                          
+                                          RichText(
+                                            text: TextSpan(
+                                              text: 'Cantidad: ',
+                                              style: TextStyle(
+                                                color: Colors.white.withAlpha(100),
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: '${protein.buyWeight} kg',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.normal
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                    
+                                          RichText(
+                                            text: TextSpan(
+                                              text: 'Costo: ',
+                                              style: TextStyle(
+                                                color: Colors.white.withAlpha(100),
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: '${protein.buyKgWeight} Bs',
+                                                  style: TextStyle(
+                                                    color: Colors.green.lightest,
+                                                    fontWeight: FontWeight.normal
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                    
+                                          RichText(
+                                            text: TextSpan(
+                                              text: '% de Merma: ',
+                                              style: TextStyle(
+                                                color: Colors.white.withAlpha(100),
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: '${protein.shrikagepercentage} %',
+                                                  style: TextStyle(
+                                                    color: Colors.green.lightest,
+                                                    fontWeight: FontWeight.normal
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                    
+                                          RichText(
+                                            text: TextSpan(
+                                              text: 'Peso por porcion: ',
+                                              style: TextStyle(
+                                                color: Colors.white.withAlpha(100),
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: '${protein.weightPortionKg} kg',
+                                                  style: TextStyle(
+                                                    color: Colors.green.lightest,
+                                                    fontWeight: FontWeight.normal
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                    
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+                              const Divider(),
+                              const SizedBox(height: 5),
+
+                              if(recipeModel.additionalsingredients!.sections.isNotEmpty) ...[
+                                
+                                Text('Ingredientes adicionales:', style: FluentTheme.of(context).typography.title),
+
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.white.withAlpha(50)),
+                                  ),
+                                  child: ListView.builder(
+                                    //* Ingredientes adicionales
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: recipeModel.additionalsingredients?.sections.length,
+                                    itemBuilder: (context, index) {
+                                      final ingredient = recipeModel.additionalsingredients?.sections[index];
+                                      return ListTile(
+                                        title: Text(ingredient!.name, style: FluentTheme.of(context).typography.subtitle),
+                                        subtitle: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          spacing: 8,
+                                          children: [
+                                            ...ingredient.items.map((item) => Row(
+                                              spacing: 5,
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(item.name == '' ? 'Sin nombre' : item.name, style: FluentTheme.of(context).typography.body)),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    spacing: 8,
+                                                    children: [
+                                                      const SizedBox(width: 2),
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          text: 'Cantidad: ',
+                                                          style: TextStyle(
+                                                            color: Colors.white.withAlpha(100),
+                                                          ),
+                                                          children: <TextSpan>[
+                                                            TextSpan(
+                                                              text: '${item.count} kg',
+                                                              style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontWeight: FontWeight.normal
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          text: 'Costo por kg: ',
+                                                          style: TextStyle(
+                                                            color: Colors.white.withAlpha(100),
+                                                          ),
+                                                          children: <TextSpan>[
+                                                            TextSpan(
+                                                              text: '${item.kgCost} Bs',
+                                                              style: TextStyle(
+                                                                color: Colors.green.lightest,
+                                                                fontWeight: FontWeight.normal
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      
+                                                  
+                                                      
+                                                    ],
+                                                  ),
+                                                ),
+                                                const Divider(),
+                                              ],
+                                            )
+                                            ),
+
+                                            const SizedBox(height: 10),
+                                            const Divider(),
+                                            const SizedBox(height: 5),
+                                          
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  )
+                                ),
+                              ],
+
+                              Text('Resumen económico:', style: FluentTheme.of(context).typography.title),
+
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.white.withAlpha(50)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    spacing: 8,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Costo ingredientes: ',
+                                          style: TextStyle(
+                                            color: Colors.white.withAlpha(100),
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: '${recipeModel.recipeCostModel?.economicSummary.totalIngredientsCost}',
+                                              style: TextStyle(
+                                                color: Colors.green.lightest,
+                                                fontWeight: FontWeight.normal
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Gastos fijos por unidad: ',
+                                          style: TextStyle(
+                                            color: Colors.white.withAlpha(100),
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: '${recipeModel.recipeCostModel?.economicSummary.unitFixedExpenses}',
+                                              style: TextStyle(
+                                                color: Colors.green.lightest,
+                                                fontWeight: FontWeight.normal
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Ganancia esperada: ',
+                                          style: TextStyle(
+                                            color: Colors.white.withAlpha(100),
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: '${recipeModel.recipeCostModel?.economicSummary.expectedProfit}',
+                                              style: TextStyle(
+                                                color: Colors.green.lightest,
+                                                fontWeight: FontWeight.normal
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Precio de venta sugerido: ',
+                                          style: TextStyle(
+                                            color: Colors.white.withAlpha(100),
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: '${recipeModel.recipeCostModel?.economicSummary.suggestedSalesPrice}',
+                                              style: TextStyle(
+                                                color: Colors.green.lightest,
+                                                fontWeight: FontWeight.normal
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ),
+
+                              const SizedBox(height: 10),
+                              const Divider(),
+                              const SizedBox(height: 5),
+
+                              Text('Gastos fijos:', style: FluentTheme.of(context).typography.title),
+
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.white.withAlpha(50)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    spacing: 8,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Gastos generales: ',
+                                          style: TextStyle(
+                                            color: Colors.white.withAlpha(100),
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: '${recipeModel.recipeCostModel?.businessMaintenance.monthlyFixedExpenses}',
+                                              style: TextStyle(
+                                                color: Colors.green.lightest,
+                                                fontWeight: FontWeight.normal
+                                              ),
+                                            ),
+                                          ]
+                                          )
+                                        ),
+
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Gastos fijos por unidad: ',
+                                            style: TextStyle(
+                                              color: Colors.white.withAlpha(100),
+                                            ),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '${recipeModel.recipeCostModel?.businessMaintenance.netProfitperUnit}',
+                                                style: TextStyle(
+                                                  color: Colors.green.lightest,
+                                                  fontWeight: FontWeight.normal
+                                                ),
+                                              ),
+                                            ]
+                                            )
+                                          ),
+
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Cantidad para rentabilidad: ',
+                                            style: TextStyle(
+                                              color: Colors.white.withAlpha(100),
+                                            ),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '${recipeModel.recipeCostModel?.businessMaintenance.unitsForBreakEven}',
+                                                style: TextStyle(
+                                                  color: Colors.green.lightest,
+                                                  fontWeight: FontWeight.normal
+                                                ),
+                                              ),
+                                            ]
+                                            )
+                                          ),
+
+
+                                    
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                            
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -230,6 +600,7 @@ class ListScreenState extends State<ListScreen> {
     );
   }
 
+  /// Elimina un item de la lista y de la base de datos con animación
   void _removeItem(int index) {
     final removedItem = recipeBox.getAt(index);
 
