@@ -2,7 +2,12 @@
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
 
-## [1.0.0+010] - 2026-05-01 FreddyJr31
+## [1.0.0+011] - 2026-04-02 FreddyJr31
+
+- [APP] - Quitar moneda Bs.
+- [APP] - Mostrar calculo de USD en gastos fijos.
+
+## [1.0.0+010] - 2026-04-02 FreddyJr31
 
 - [APP] - Cambio en tipado de cantidad de ingredientes adicionales a double.
 

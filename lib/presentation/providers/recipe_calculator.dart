@@ -18,11 +18,7 @@ class Amount {
 }
 
 class RecipeCalculator {
-  
-  // double usdExchangeRate = 446.0;
-  //double usdExchangeRate = RateExchangeProvider().getExchangeRate();
-  // double monthlyFixedExpenses = 100000.0;
-  //double monthlyFixedExpenses = FixedCostProvider().getFixedCost();
+
 
   final double usdExchangeRate;
   final double monthlyFixedExpenses;
@@ -38,7 +34,6 @@ class RecipeCalculator {
   Amount _getAmount(double value) {
     return Amount(
       bs: double.parse((value * usdExchangeRate).toStringAsFixed(2)),
-      // usd: double.parse((value / usdExchangeRate).toStringAsFixed(2)),
       usd: double.parse(value.toStringAsFixed(2)),
     );
   }

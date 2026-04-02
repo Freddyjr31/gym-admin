@@ -205,6 +205,7 @@ class _FormFixedCostState extends State<FormFixedCost> {
                           //* calcular el costo total con la tasa de cambio y guardar el resultado en el provider
                           double totalAllCostHive = fixedCostProvider.calculatedFixedCost(sumatoryCostInBox, exchangeRate);
                           fixedCostProvider.setFixedCost(totalAllCostHive);
+                          fixedCostProvider.setFixedCostInUSD(totalAllCostHive / exchangeRate);
         
                           await displayInfoBar(context, builder: (context, close) {
                               return InfoBar(

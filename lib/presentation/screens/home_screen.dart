@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // 2. Actualizar el estado (Asegúrate de que 'fixedCost' sea el nombre correcto del campo en tu modelo)
     final fixedCostProvider = context.read<FixedCostProvider>();
     final exchangeRateProvider = context.read<RateExchangeProvider>();
+    fixedCostProvider.setFixedCostInUSD(total);
     double costCalculated = fixedCostProvider.calculatedFixedCost(total, exchangeRateProvider.getExchangeRate());
     fixedCostProvider.setFixedCost(costCalculated);
     LoggerService.write('fixedCost actualizado: $costCalculated');
@@ -249,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const Spacer(),
                                 //* total de gastos fijos registrados
                                 Text(
-                                  "${fixedCostProvider.getFixedCost().toStringAsFixed(2)} Bs. / ${(fixedCostProvider.getFixedCost().toStringAsFixed(2))} \$", 
+                                  "${fixedCostProvider.getFixedCost().toStringAsFixed(2)} Bs. / ${fixedCostProvider.getFixedCostInUSD().toStringAsFixed(2)} \$", 
                                   style: FluentTheme.of(context).typography.bodyLarge?.copyWith(
                                     color: Colors.green.lightest,
                                     fontWeight: FontWeight.bold,
