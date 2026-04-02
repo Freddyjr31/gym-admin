@@ -2,6 +2,10 @@
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
 
+## [1.0.0+010] - 2026-05-01 FreddyJr31
+
+- [APP] - Cambio en tipado de cantidad de ingredientes adicionales a double.
+
 ## [1.0.0+009] - 2026-04-01 FreddyJr31
 
 - [APP] - visualización de datos en listado desplegable.

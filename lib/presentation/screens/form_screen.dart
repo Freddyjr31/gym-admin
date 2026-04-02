@@ -139,10 +139,11 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   AdditionalIngredients buildAdditionalIngredientsModel() {
     final secciones = _sections.map((section) {
       final items = section.items.map((item) {
+        debugPrint('Construyendo item: ${item.nameController.text.trim()}, precio por kg: ${item.pkgCostController.text.trim()}, cantidad usada (kg): ${item.countController.text.trim()}');
         return ItemsSections(
           name: item.nameController.text.trim(),
           kgCost: double.tryParse(item.pkgCostController.text) ?? 0.0,
-          count: int.tryParse(item.countController.text) ?? 0,
+          count: double.tryParse(item.countController.text) ?? 0.0,
         );
       }).toList();
 
@@ -202,6 +203,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         sectionName: section.sectionName,
         sectionTotal: section.sectionTotal,
         items: section.items.map((item) {
+          debugPrint('--- Item adicional: ${item.name}, precio por kg: ${item.pricePerKg}, cantidad usada (kg): ${item.quantityKg}, subtotal: ${item.subtotal}');
           return AdditionalItemCost(
             name: item.name,
             quantityKg: item.quantityKg,
