@@ -2,6 +2,11 @@
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
 
+## [1.0.0+009] - 2026-04-01 FreddyJr31
+
+- [APP] - visualización de datos en listado desplegable.
+- [APP] - Ajuste de calculos.
+
 ## [1.0.0+008] - 2026-04-01 FreddyJr31
 
 - [APP] - Ajuste en funcion de calcular recetas.

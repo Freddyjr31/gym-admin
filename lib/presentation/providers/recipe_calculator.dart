@@ -49,6 +49,11 @@ class RecipeCalculator {
     debugPrint('input: $input');
     // 1. CALCULAR INGREDIENTES PRINCIPALES (Proteínas)
     double totalMainIngredientsCost = 0;
+
+    var fixed = input.fixedCostsAndMargin;
+    debugPrint('fixed: $fixed');
+
+    double totalCostMainIngredients = 0;
     
     List<MainIngredientResult> mainIngredientsResults = (input.mainIngredients).map((ing) {
       
@@ -58,6 +63,7 @@ class RecipeCalculator {
       debugPrint('weightPerPortionKg: ${ing.weightPerPortionKg}');
 
       double totalPurchaseCost = ing.purchaseWeightKg * ing.purchasePricePerKg;
+      debugPrint('totalPurchaseCost: $totalPurchaseCost');
       double usableWeight = ing.purchaseWeightKg - ((ing.wastePercentage * ing.purchaseWeightKg) / 100);
       double realPricePerKg = totalPurchaseCost / usableWeight;
       
@@ -67,85 +73,65 @@ class RecipeCalculator {
 
       double portionCost = ing.weightPerPortionKg * realPricePerKg;
 
+      totalCostMainIngredients += totalPurchaseCost;
+      debugPrint('totalCostMainIngredients: $totalCostMainIngredients'); 
       totalMainIngredientsCost += portionCost;
 
-    //   return {
-    //     'name': ing['name'],
-    //     'wasteCalculations': {
-    //       'initialWeightKg': ing['purchaseWeightKg'],
-    //       'wastePercentage': (ing['wastePercentage'] * 100).toInt(),
-    //       'usableWeightKg': double.parse(usableWeight.toStringAsFixed(3)),
-    //       'realPricePerKg': _getAmount(realPricePerKg),
-    //     },
-    //     'portion': {
-    //       'weightUsedKg': ing['weightPerPortionKg'],
-    //       'cost': _getAmount(portionCost),
-    //     }
-    //   };
-    // }).toList();
+      return MainIngredientResult(
+        name: ing.name,
+        wasteCalculations: WasteCalculations(
+          initialWeightKg: ing.purchaseWeightKg,
+          wastePercentage: (ing.wastePercentage).toDouble(),
+          usableWeightKg: double.parse(usableWeight.toStringAsFixed(3)),
+          realPricePerKg: _getAmount(realPricePerKg),
+        ),
+        portion: Portion(
+          // weightUsedKg: ing.weightPerPortionKg,
+          weightUsedKg: double.parse((usableWeight / ing.weightPerPortionKg).toStringAsFixed(2)),
+          cost: _getAmount(portionCost),
+        ),
+      );
 
-    return MainIngredientResult(
-      name: ing.name,
-      wasteCalculations: WasteCalculations(
-        initialWeightKg: ing.purchaseWeightKg,
-        wastePercentage: (ing.wastePercentage).toDouble(),
-        usableWeightKg: double.parse(usableWeight.toStringAsFixed(3)),
-        realPricePerKg: _getAmount(realPricePerKg),
-      ),
-      portion: Portion(
-        // weightUsedKg: ing.weightPerPortionKg,
-        weightUsedKg: double.parse((usableWeight / ing.weightPerPortionKg).toStringAsFixed(2)),
-        cost: _getAmount(portionCost),
-      ),
-    );
     }).toList();
 
     // 2. CALCULAR SECCIONES ADICIONALES (Marinadas, Rellenos, etc.)
     double totalAdditionalCost = 0;
+    double additionalBenefit = 0;
+    double additionalIngredientsTotal = 0;
     
     List<AdditionalSection> additionalSectionsResults = input.additionalSectionsRequest.map((section) {
-      double sectionTotalBs = 0;
+      double sectionTotal = 0;
       
       List<AdditionalItem> itemsResults = section.items.map((item) {
-        double itemSubtotalBs = item.pricePerKg * item.quantityKg;
-        sectionTotalBs += itemSubtotalBs;
+        
+        additionalBenefit = (fixed.desiredProfitPercentage / 100);
+        double itemSubtotal = (item.pricePerKg * item.quantityKg) + additionalBenefit;
+        sectionTotal += itemSubtotal;
+        additionalIngredientsTotal += item.pricePerKg;
 
         return AdditionalItem(
           name: item.name,
           quantityKg: item.quantityKg,
           pricePerKg: _getAmount(item.pricePerKg),
-          subtotal: _getAmount(itemSubtotalBs),
+          subtotal: _getAmount(itemSubtotal),
         );
-        
-        // return {
-        //   'name': item['name'],
-        //   'quantityKg': item['quantityKg'],
-        //   'pricePerKg': _getAmount(item['pricePerKg']),
-        //   'subtotal': _getAmount(itemSubtotalBs),
-        // };
 
       }).toList();
 
-      totalAdditionalCost += sectionTotalBs;
-      
-      // return {
-      //   'sectionName': section['sectionName'],
-      //   'items': itemsResults,
-      //   'sectionTotal': _getAmount(sectionTotalBs),
-      // };
+      totalAdditionalCost += sectionTotal;
 
       return AdditionalSection(
         sectionName: section.name,
         items: itemsResults,
-        sectionTotal: _getAmount(sectionTotalBs).toString(),
+        sectionTotal: _getAmount(sectionTotal).toString(),
       );
       
     }).toList();
 
+    debugPrint('totalAdditionalCost: $totalAdditionalCost');
     // 3. CONSOLIDACIÓN Y PRECIO DE VENTA
-    var fixed = input.fixedCostsAndMargin;
-    debugPrint('fixed: $fixed');
-    
+    double totalMainIngredientsCostWithAdditional = totalCostMainIngredients + additionalIngredientsTotal;
+    debugPrint('totalMainIngredientsCostWithAdditional: $totalMainIngredientsCostWithAdditional');
     // Costo base: Proteínas + Adicionales + Pan
     double baseIngredientsCost = totalMainIngredientsCost + totalAdditionalCost + fixed.breadUnit;
     debugPrint('baseIngredientsCost: $baseIngredientsCost');
@@ -162,6 +148,7 @@ class RecipeCalculator {
     debugPrint('finalSalesPrice: $finalSalesPrice');
 
     double netProfitPerUnit = (finalSalesPrice * fixed.desiredProfitPercentage) / 100;
+    netProfitPerUnit += additionalBenefit;
     debugPrint('netProfitPerUnit: $netProfitPerUnit');
 
     //* 4. MANTENIMIENTO (Punto de Equilibrio)
@@ -169,32 +156,14 @@ class RecipeCalculator {
     // double netProfitPerUnit = (finalSalesPrice * expectedAmountToHave) / 100;
     debugPrint('netProfitPerUnit: $netProfitPerUnit');
     debugPrint('unitFixedCosts: $unitFixedCosts');
-    //* cantidad minima
-    int breakEvenUnits = (monthlyFixedExpenses / netProfitPerUnit).toInt(); //* cantidad de unidades a vender para cubrir los gastos generales (punto de equilibrio)
+
+    //* cantidad minima de venta
+    int breakEvenUnits = (totalMainIngredientsCostWithAdditional / finalSalesPrice).ceil().toInt(); //* cantidad de unidades a vender para cubrir los gastos generales (punto de equilibrio)
     debugPrint('breakEvenUnits: $breakEvenUnits');
 
     log("Tasa de cambio: $usdExchangeRate");
     log("Gastos mensuales: $monthlyFixedExpenses");
     
-    // RETORNO DEL MAPA ESTRUCTURADO
-    // return {
-    //   'recipeName': input['recipeName'],
-    //   'exchangeRate': usdExchangeRate,
-    //   'mainIngredients': mainIngredientsResults,
-    //   'additionalSections': additionalSectionsResults,
-    //   'economicSummary': {
-    //     'totalIngredientsCost': _getAmount(baseIngredientsCost),
-    //     'expectedProfit': _getAmount(profitAmount),
-    //     'unitFixedExpenses': _getAmount(unitFixedCosts),
-    //     'suggestedSalesPrice': _getAmount(finalSalesPrice.ceilToDouble()),
-    //   },
-    //   'businessMaintenance': {
-    //     'monthlyFixedExpenses': _getAmount(monthlyFixedExpenses),
-    //     'netProfitPerUnit': _getAmount(netProfitPerUnit),
-    //     'unitsForBreakEven': breakEvenUnits,
-    //   }
-    // };
-
     return RecipeCalculation(
       recipeName: input.recipeName,
       exchangeRate: usdExchangeRate, 

@@ -249,8 +249,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const Spacer(),
                                 //* total de gastos fijos registrados
                                 Text(
-                                  "${fixedCostProvider.getFixedCost().toStringAsFixed(2)} \$", 
-                                  style: FluentTheme.of(context).typography.title?.copyWith(
+                                  "${fixedCostProvider.getFixedCost().toStringAsFixed(2)} Bs. / ${(fixedCostProvider.getFixedCost().toStringAsFixed(2))} \$", 
+                                  style: FluentTheme.of(context).typography.bodyLarge?.copyWith(
                                     color: Colors.green.lightest,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -261,64 +261,64 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           /// Lista para mostrar los gastos fijos registrados
                           fixedCostBox.length == 0 ? const Text('No hay gastos fijos registrados') : 
-                          Expanded(
-                            flex: 1,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                spacing: 8,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const AlwaysScrollableScrollPhysics(),
-                                    itemCount: fixedCostBox.length,
-                                    itemBuilder: (context, index) {
-                                      final fixedCost = fixedCostBox.getAt(index);
-                                      return Container(
-                                        margin: const EdgeInsets.only(bottom: 8),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: FluentTheme.of(context).scaffoldBackgroundColor,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: ListTile.selectable(
-                                          selectionMode: ListTileSelectionMode.single,
-                                          title: Text(
-                                            fixedCost?.fixedCostItems.map((e) => e.nameCost).join(', ') ?? 'Gasto fijo ${index + 1}',
-                                            style: FluentTheme.of(context).typography.bodyStrong,
+                            Expanded(
+                              flex: 1,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  spacing: 8,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const AlwaysScrollableScrollPhysics(),
+                                      itemCount: fixedCostBox.length,
+                                      itemBuilder: (context, index) {
+                                        final fixedCost = fixedCostBox.getAt(index);
+                                        return Container(
+                                          margin: const EdgeInsets.only(bottom: 8),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: FluentTheme.of(context).scaffoldBackgroundColor,
+                                              width: 1,
                                             ),
-                                          subtitle: RichText(
-                                            text: TextSpan(
-                                              text: 'Total: ',
-                                              style: FluentTheme.of(context).typography.body,
-                                              children: [
-                                                TextSpan(
-                                                  text: '${fixedCost?.fixedCostItems.fold(0.0, (sum, element) => sum + element.cost)} \$ / ${fixedCostProvider.calculatedFixedCost(fixedCost?.fixedCostItems.fold(0.0, (sum, element) => sum + element.cost) ?? 0.0, context.read<RateExchangeProvider>().getExchangeRate()).toStringAsFixed(2)} Bs.',
-                                                  style: FluentTheme.of(context).typography.body?.copyWith(
-                                                    color: Colors.green.lightest,
-                                                    fontWeight: FontWeight.bold,
+                                          ),
+                                          child: ListTile.selectable(
+                                            selectionMode: ListTileSelectionMode.single,
+                                            title: Text(
+                                              fixedCost?.fixedCostItems.map((e) => e.nameCost).join(', ') ?? 'Gasto fijo ${index + 1}',
+                                              style: FluentTheme.of(context).typography.bodyStrong,
+                                              ),
+                                            subtitle: RichText(
+                                              text: TextSpan(
+                                                text: 'Total: ',
+                                                style: FluentTheme.of(context).typography.body,
+                                                children: [
+                                                  TextSpan(
+                                                    text: '${fixedCost?.fixedCostItems.fold(0.0, (sum, element) => sum + element.cost)} \$ / ${fixedCostProvider.calculatedFixedCost(fixedCost?.fixedCostItems.fold(0.0, (sum, element) => sum + element.cost) ?? 0.0, context.read<RateExchangeProvider>().getExchangeRate()).toStringAsFixed(2)} Bs.',
+                                                    style: FluentTheme.of(context).typography.body?.copyWith(
+                                                      color: Colors.green.lightest,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
+                                            ),
+                                            trailing: IconButton(
+                                              icon: const Icon(FluentIcons.delete),
+                                              onPressed: () async {
+                                                fixedCostBox.deleteAt(index);
+                                                await updateFixedCost(context);
+                                                setState(() {});
+                                              },
                                             ),
                                           ),
-                                          trailing: IconButton(
-                                            icon: const Icon(FluentIcons.delete),
-                                            onPressed: () async {
-                                              fixedCostBox.deleteAt(index);
-                                              await updateFixedCost(context);
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                ],
-                              ),
-                            )),
+                                        );
+                                      },
+                                    )
+                                  ],
+                                ),
+                              )),
 
                           const SizedBox(height: 10),
                           const Divider(),
