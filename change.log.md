@@ -2,6 +2,12 @@
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
 
+## [1.0.0+012] - 2026-04-04 FreddyJr31
+
+- [APP] - Barra de scroll mas visible.
+- [APP] - vaciar inputs (sin texto de ejemplo).
+- [APP] - Fondo negro en contenido de listado de recetas.
+
 ## [1.0.0+011] - 2026-04-02 FreddyJr31
 
 - [APP] - Quitar moneda Bs.

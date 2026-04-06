@@ -49,10 +49,10 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     super.initState();
     //* por defecto añado items de cada modelo
     _principalProtein.add(
-      PrincipalProtein(initialName: "Pollo, Carne, Pescado...")
+      PrincipalProtein(initialName: "")
       );
     _sections.add(
-      SectionState(initialName: 'Marinado')
+      SectionState(initialName: '')
       );
   }
 
@@ -373,6 +373,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Costo por kg',
                                 child: TextFormBox(
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: protein.buyWeightController,
                                   placeholder: '1\$',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -384,8 +385,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Cantidad de Kg comprados', 
                                 child: TextFormBox(
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: protein.buyKgWeightController,
-                                  placeholder: '1',
+                                  placeholder: '5',
                                   validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
                                 )
                               )
@@ -402,6 +404,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Porcentaje de merma',
                                 child: TextFormBox(
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: protein.shrinkagePercentageController,
                                   placeholder: '10%',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -413,6 +416,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Peso por porción',
                                 child: TextFormBox(
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: protein.weightPortionController,
                                   placeholder: '0.25',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -589,7 +593,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                     child: TextFormBox(
                                       controller: item.countController,
                                       placeholder: 'Cantidad usada (kg)',
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -637,6 +641,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                         controller: _breadUnitCostController,
                         placeholder: '1.50',
                         validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
                   ),
@@ -648,6 +653,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                         controller: _packagingUnit,
                         placeholder: '0.50',
                         validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
                   ),
@@ -665,6 +671,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                         controller: _operationCost,
                         placeholder: '0.50',
                         validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
                   ),
@@ -676,6 +683,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                         controller: _desiredProfitPercentage,
                         placeholder: '10%',
                         validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
                   ),
@@ -1097,7 +1105,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                             );
                                           });
                               
-                                          Navigator.pop(context);
+                                          // Navigator.pop(context);
                                         } else {
                               
                                           LoggerService.write('No se pudo guardar la receta');

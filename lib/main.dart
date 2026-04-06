@@ -54,6 +54,16 @@ class MainApp extends StatelessWidget {
         brightness: Brightness.dark,
         accentColor: Colors.blue,
         typography: Typography.fromBrightness(brightness: Brightness.dark),
+        scrollbarTheme: ScrollbarThemeData(
+          thickness: 5, // Grosor cuando no se interactúa
+          mainAxisMargin: 50,
+          hoveringThickness: 5.0, // Grosor cuando pasas el mouse
+          scrollbarColor: Colors.white,
+          minThumbLength: 50.0,
+          radius: Radius.circular(10),
+          padding: EdgeInsets.all(2),
+          hoveringPadding: EdgeInsets.all(5)
+        ),
       ),
       debugShowCheckedModeBanner: false,
       home: NavigationScreen(),
