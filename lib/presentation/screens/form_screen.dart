@@ -681,8 +681,17 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                       label: 'Margen deseado',
                       child: TextFormBox(
                         controller: _desiredProfitPercentage,
-                        placeholder: '10%',
-                        validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        placeholder: 'Ej: 10%, 20%...',
+                        validator: (v) {
+                          
+                          if (v!.trim().isEmpty) return 'Obligatorio';
+                          
+                          if (double.tryParse(v) == null) return 'Obligatorio';
+
+                          if(double.tryParse(v)! >= 60) return 'Margen demasiado alto';
+
+                          return null;
+                        },
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
@@ -901,18 +910,18 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                                       style: FluentTheme.of(context).typography.bodyStrong,
                                                     ),
                                               
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        text: 'Cantidad de porcines posibles: ',
-                                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                                        children: [
-                                                          TextSpan(
-                                                            text: "${item.portion.weightUsedKg.toInt().toString()} porciones",
-                                                            style: FluentTheme.of(context).typography.body,
-                                                          )
-                                                        ]
-                                                      ),
-                                                    ),
+                                                    // RichText(
+                                                    //   text: TextSpan(
+                                                    //     text: 'Cantidad de porcines posibles: ',
+                                                    //     style: FluentTheme.of(context).typography.bodyStrong,
+                                                    //     children: [
+                                                    //       TextSpan(
+                                                    //         text: "${item.portion.weightUsedKg.toInt().toString()} porciones",
+                                                    //         style: FluentTheme.of(context).typography.body,
+                                                    //       )
+                                                    //     ]
+                                                    //   ),
+                                                    // ),
                                               
                                                     RichText(
                                                       text: TextSpan(
@@ -1017,7 +1026,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                     
                                         RichText(
                                           text: TextSpan(
-                                            text: 'Cantidad minima de venta: ',
+                                            text: 'Punto de equilibrio: ',
                                             style: FluentTheme.of(context).typography.bodyStrong,
                                             children: [
                                               TextSpan(
