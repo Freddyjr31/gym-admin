@@ -2,6 +2,11 @@
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
 
+## [1.0.0+013] - 2026-04-06 FreddyJr31
+
+- [APP] - Ajuste en calculo de recetas.
+- [APP] - Ajuste en validaciones de formulario.
+
 ## [1.0.0+012] - 2026-04-04 FreddyJr31
 
 - [APP] - Barra de scroll mas visible.

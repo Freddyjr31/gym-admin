@@ -19,7 +19,6 @@ class Amount {
 
 class RecipeCalculator {
 
-
   final double usdExchangeRate;
   final double monthlyFixedExpenses;
 
@@ -59,6 +58,7 @@ class RecipeCalculator {
 
       double totalPurchaseCost = ing.purchaseWeightKg * ing.purchasePricePerKg;
       debugPrint('totalPurchaseCost: $totalPurchaseCost');
+
       double usableWeight = ing.purchaseWeightKg - ((ing.wastePercentage * ing.purchaseWeightKg) / 100);
       double realPricePerKg = totalPurchaseCost / usableWeight;
       
@@ -69,6 +69,7 @@ class RecipeCalculator {
       double portionCost = ing.weightPerPortionKg * realPricePerKg;
 
       totalCostMainIngredients += totalPurchaseCost;
+
       debugPrint('totalCostMainIngredients: $totalCostMainIngredients'); 
       totalMainIngredientsCost += portionCost;
 
@@ -91,7 +92,7 @@ class RecipeCalculator {
 
     // 2. CALCULAR SECCIONES ADICIONALES (Marinadas, Rellenos, etc.)
     double totalAdditionalCost = 0;
-    double additionalBenefit = 0;
+    // double additionalBenefit = 0;
     double additionalIngredientsTotal = 0;
     
     List<AdditionalSection> additionalSectionsResults = input.additionalSectionsRequest.map((section) {
@@ -99,8 +100,8 @@ class RecipeCalculator {
       
       List<AdditionalItem> itemsResults = section.items.map((item) {
         
-        additionalBenefit = (fixed.desiredProfitPercentage / 100);
-        double itemSubtotal = (item.pricePerKg * item.quantityKg) + additionalBenefit;
+        // additionalBenefit = (fixed.desiredProfitPercentage / 100);
+        double itemSubtotal = (item.pricePerKg * item.quantityKg); // + additionalBenefit;
         sectionTotal += itemSubtotal;
         additionalIngredientsTotal += item.pricePerKg;
 
@@ -131,10 +132,6 @@ class RecipeCalculator {
     double baseIngredientsCost = totalMainIngredientsCost + totalAdditionalCost + fixed.breadUnit;
     debugPrint('baseIngredientsCost: $baseIngredientsCost');
 
-    // Utilidad bruta
-    // double profitAmount = baseIngredientsCost * fixed.desiredProfitPercentage;
-    // debugPrint('GANANCIAS ESPERADAS: profitAmount: $profitAmount');
-    
     // Gastos fijos por unidad
     double unitFixedCosts = fixed.operatingCost + fixed.packagingUnit;
 
@@ -143,7 +140,8 @@ class RecipeCalculator {
     debugPrint('finalSalesPrice: $finalSalesPrice');
 
     double netProfitPerUnit = (finalSalesPrice * fixed.desiredProfitPercentage) / 100;
-    netProfitPerUnit += additionalBenefit;
+    // netProfitPerUnit += additionalBenefit;
+    finalSalesPrice += netProfitPerUnit;
     debugPrint('netProfitPerUnit: $netProfitPerUnit');
 
     //* 4. MANTENIMIENTO (Punto de Equilibrio)
@@ -152,10 +150,14 @@ class RecipeCalculator {
     debugPrint('netProfitPerUnit: $netProfitPerUnit');
     debugPrint('unitFixedCosts: $unitFixedCosts');
 
-    //* cantidad minima de venta
-    int breakEvenUnits = (totalMainIngredientsCostWithAdditional / finalSalesPrice).ceil().toInt(); //* cantidad de unidades a vender para cubrir los gastos generales (punto de equilibrio)
-    debugPrint('breakEvenUnits: $breakEvenUnits');
-
+    //* cantidad minima de venta: PUNTO DE EQUILIBRIO
+    double expenseMonthlyInDollars = monthlyFixedExpenses / usdExchangeRate;
+    double breakEvenUnits =  (expenseMonthlyInDollars / (finalSalesPrice - netProfitPerUnit)).ceilToDouble();
+    
+    log('expenseMonthlyInDollars: $expenseMonthlyInDollars');
+    log('finalSalesPrice: $finalSalesPrice');
+    log('netProfitPerUnit: $netProfitPerUnit');
+    log('breakEvenUnits: $breakEvenUnits');
     log("Tasa de cambio: $usdExchangeRate");
     log("Gastos mensuales: $monthlyFixedExpenses");
     
@@ -171,7 +173,7 @@ class RecipeCalculator {
         suggestedSalesPrice: _getAmount(finalSalesPrice).toString(),
       ),
       businessMaintenance: BusinessMaintenance( //* agregar esto a la base de datosNO ESTA Y ALI ME GRITO
-        monthlyFixedExpenses: _getAmount(monthlyFixedExpenses).toString(), //* gastos generales
+        monthlyFixedExpenses: _getAmount(expenseMonthlyInDollars).toString(), //* gastos generales
         netProfitPerUnit: _getAmount(netProfitPerUnit).toString(), //* Cantidad de dinero que me queda (ganancias)
         unitsForBreakEven: breakEvenUnits.toInt(), //* Cantidad de platillos a vender para obtener el punto de equilibrio
       ),
