@@ -1,11 +1,10 @@
 name: gym_admin
-description: >
-  Aplicación de escritorio para Windows desarrollada en Flutter.
+description: "Aplicación de escritorio para Windows desarrollada en Flutter.
   Permite gestionar recetas, ingredientes y costos de producción,
-  con una interfaz moderna basada en Fluent UI.
+  con una interfaz moderna basada en Fluent UI."
 
 publish_to: 'none'
-version: 0.1.0+0011
+version: 0.1.0+0012
 
 environment:
   sdk: ^3.11.0
@@ -33,3 +32,13 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+
+msix_config:
+  display_name: AF RecipeCost  # Nombre que verá el usuario
+  publisher_display_name: AF
+  publisher: 'CN=AF' # Requerido para el certificado
+  identity_name: com.af.gymadmin
+  msix_version: 1.0.0.1
+  # logo_path: assets/logo.png # Ruta al icono de tu app
+  capabilities: "internetClient, location" # Permisos que necesita
+  description: "Aplicación de escritorio para Windows desarrollada en Flutter. Permite gestionar recetas, ingredientes y costos de producción, con una interfaz moderna basada en Fluent UI."
