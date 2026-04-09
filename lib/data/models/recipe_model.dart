@@ -1,5 +1,5 @@
 
-import 'package:gym_admin/data/models/additional_ingredients_model.dart';
+import 'package:cook_ledger/data/models/additional_ingredients_model.dart';
 
 class RecipeModel {
   final String name;

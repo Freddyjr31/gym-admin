@@ -1,4 +1,4 @@
-# 🧁 Gym Admin — Gestión de Recetas y Costos
+# 🧁 Cook Ledger — Gestión de Recetas y Costos
 
 Aplicación de escritorio desarrollada en **Flutter** para Windows, diseñada para:
 

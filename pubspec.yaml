@@ -1,10 +1,10 @@
-name: gym_admin
+name: cook_ledger
 description: "Aplicación de escritorio para Windows desarrollada en Flutter.
   Permite gestionar recetas, ingredientes y costos de producción,
   con una interfaz moderna basada en Fluent UI."
 
 publish_to: 'none'
-version: 0.1.0+0013
+version: 0.1.0+0014
 
 environment:
   sdk: ^3.11.0
@@ -26,6 +26,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   hive_generator:
   build_runner:
+  flutter_launcher_icons: ^0.14.4
   
 
 flutter:
@@ -42,3 +43,13 @@ msix_config:
   # logo_path: assets/logo.png # Ruta al icono de tu app
   capabilities: "internetClient, location" # Permisos que necesita
   description: "Aplicación de escritorio para Windows desarrollada en Flutter. Permite gestionar recetas, ingredientes y costos de producción, con una interfaz moderna basada en Fluent UI."
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/cook_ledger.png"
+  min_sdk_android: 21 # Para soporte de iconos adaptativos
+  windows:
+    generate: true
+    image_path: "assets/images/cook_ledger.png"
+    icon_size: 48 # Tamaño opcional

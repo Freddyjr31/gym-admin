@@ -1,12 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cook_ledger/core/utils/Logs/log_service.dart';
+import 'package:cook_ledger/data/datasource/Local/hive_config/hive_config.dart';
+import 'package:cook_ledger/presentation/providers/exchange_rate_provider.dart';
+import 'package:cook_ledger/presentation/providers/fixed_cost_provider.dart';
+import 'package:cook_ledger/presentation/screens/navigation_screen.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/core/utils/Logs/log_service.dart';
-import 'package:gym_admin/data/datasource/Local/hive_config/hive_config.dart';
-import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
-import 'package:gym_admin/presentation/providers/fixed_cost_provider.dart';
-import 'package:gym_admin/presentation/screens/navigation_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

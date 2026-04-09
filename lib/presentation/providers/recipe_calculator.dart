@@ -2,9 +2,9 @@
 
 import 'dart:developer';
 
+import 'package:cook_ledger/data/models/calculated_cost_model.dart';
+import 'package:cook_ledger/data/models/data_to_calculated.dart' hide AdditionalSection;
 import 'package:flutter/material.dart';
-import 'package:gym_admin/data/models/calculated_cost_model.dart';
-import 'package:gym_admin/data/models/data_to_calculated.dart' hide AdditionalSection;
 
 /// Clase que representa un monto en dos monedas
 class Amount {

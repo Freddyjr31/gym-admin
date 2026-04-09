@@ -1,6 +1,12 @@
-## [gym_admin]
+## [cook_ledger]
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
+
+## [1.0.0+014] - 2026-04-06 FreddyJr31
+
+- [APP] - Cambio de nombre del proyecto.
+- [APP] - Ejecutable con Inno Setup.
+- [APP] - Icono de la app.
 
 ## [1.0.0+013] - 2026-04-06 FreddyJr31
 

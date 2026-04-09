@@ -1,8 +1,8 @@
 
-import 'package:gym_admin/data/datasource/Local/adapters/fixed_cost_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/adapters/recipe_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/adapters/recipe_cost_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/boxes.dart';
+import 'package:cook_ledger/data/datasource/Local/adapters/fixed_cost_adapter.dart';
+import 'package:cook_ledger/data/datasource/Local/adapters/recipe_adapter.dart';
+import 'package:cook_ledger/data/datasource/Local/adapters/recipe_cost_adapter.dart';
+import 'package:cook_ledger/data/datasource/Local/boxes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
@@ -13,7 +13,7 @@ class HiveConfig {
   static Future<void> init() async {
 
     final dir = await getApplicationSupportDirectory();
-    final path = '${dir.path}/gym_admin/hive';
+    final path = '${dir.path}/cook_ledger/hive';
     
     await Hive.initFlutter(path);
 

@@ -1,13 +1,13 @@
 
 
+import 'package:cook_ledger/core/helpers/show_content_dialog_dynamic.dart';
+import 'package:cook_ledger/core/utils/Logs/log_service.dart';
+import 'package:cook_ledger/data/datasource/Local/boxes.dart';
+import 'package:cook_ledger/presentation/providers/exchange_rate_provider.dart';
+import 'package:cook_ledger/presentation/providers/fixed_cost_provider.dart';
+import 'package:cook_ledger/presentation/widgets/form_fixed_cost.dart';
+import 'package:cook_ledger/presentation/widgets/total_recipes_count.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/core/helpers/show_content_dialog_dynamic.dart';
-import 'package:gym_admin/core/utils/Logs/log_service.dart';
-import 'package:gym_admin/data/datasource/Local/boxes.dart';
-import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
-import 'package:gym_admin/presentation/providers/fixed_cost_provider.dart';
-import 'package:gym_admin/presentation/widgets/form_fixed_cost.dart';
-import 'package:gym_admin/presentation/widgets/total_recipes_count.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
