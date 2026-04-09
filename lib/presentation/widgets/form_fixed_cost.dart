@@ -1,11 +1,11 @@
 
 import 'dart:developer';
 
+import 'package:cook_ledger/data/datasource/Local/adapters/fixed_cost_adapter.dart';
+import 'package:cook_ledger/data/datasource/Local/boxes.dart';
+import 'package:cook_ledger/presentation/providers/exchange_rate_provider.dart';
+import 'package:cook_ledger/presentation/providers/fixed_cost_provider.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/data/datasource/Local/adapters/fixed_cost_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/boxes.dart';
-import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
-import 'package:gym_admin/presentation/providers/fixed_cost_provider.dart';
 import 'package:provider/provider.dart';
 
 //* Formulario de registro de gastos fijos

@@ -1,4 +1,4 @@
-import 'package:gym_admin/data/models/items_sections_model.dart';
+import 'package:cook_ledger/data/models/items_sections_model.dart';
 
 class Sections {
   final String name;

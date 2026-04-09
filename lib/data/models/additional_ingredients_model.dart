@@ -1,4 +1,4 @@
-import 'package:gym_admin/data/models/sections_model.dart';
+import 'package:cook_ledger/data/models/sections_model.dart';
 
 class AdditionalIngredients {
   final List<Sections> sections;

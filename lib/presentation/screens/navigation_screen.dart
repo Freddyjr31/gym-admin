@@ -1,9 +1,9 @@
+import 'package:cook_ledger/core/helpers/show_content_dialog_dynamic.dart';
+import 'package:cook_ledger/presentation/providers/exchange_rate_provider.dart';
+import 'package:cook_ledger/presentation/screens/form_screen.dart';
+import 'package:cook_ledger/presentation/screens/home_screen.dart';
+import 'package:cook_ledger/presentation/screens/list_screen.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/core/helpers/show_content_dialog_dynamic.dart';
-import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
-import 'package:gym_admin/presentation/screens/form_screen.dart';
-import 'package:gym_admin/presentation/screens/home_screen.dart';
-import 'package:gym_admin/presentation/screens/list_screen.dart';
 import 'package:provider/provider.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -42,7 +42,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     return NavigationView(
       titleBar: TitleBar(
-        title: Text('Gym Admin'),
+        title: Text('Cook Ledger'),
         isBackButtonEnabled: false,
         isBackButtonVisible: false,
         endHeader: Tooltip(

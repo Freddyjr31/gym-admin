@@ -1,6 +1,6 @@
 {
-    "name": "gym_admin",
-    "short_name": "gym_admin",
+    "name": "cook_ledger",
+    "short_name": "cook_ledger",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,15 +1,15 @@
+import 'package:cook_ledger/core/helpers/show_content_dialog_dynamic.dart';
+import 'package:cook_ledger/core/utils/Logs/log_service.dart';
+import 'package:cook_ledger/data/datasource/Local/adapters/recipe_adapter.dart';
+import 'package:cook_ledger/data/datasource/Local/adapters/recipe_cost_adapter.dart';
+import 'package:cook_ledger/data/datasource/Local/boxes.dart';
+import 'package:cook_ledger/data/models/calculated_cost_model.dart';
+import 'package:cook_ledger/data/models/data_to_calculated.dart';
+import 'package:cook_ledger/presentation/models/form_state.dart';
+import 'package:cook_ledger/presentation/providers/exchange_rate_provider.dart';
+import 'package:cook_ledger/presentation/providers/fixed_cost_provider.dart';
+import 'package:cook_ledger/presentation/providers/recipe_calculator.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/core/helpers/show_content_dialog_dynamic.dart';
-import 'package:gym_admin/core/utils/Logs/log_service.dart';
-import 'package:gym_admin/data/datasource/Local/adapters/recipe_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/adapters/recipe_cost_adapter.dart';
-import 'package:gym_admin/data/datasource/Local/boxes.dart';
-import 'package:gym_admin/data/models/calculated_cost_model.dart';
-import 'package:gym_admin/data/models/data_to_calculated.dart';
-import 'package:gym_admin/presentation/models/form_state.dart';
-import 'package:gym_admin/presentation/providers/exchange_rate_provider.dart';
-import 'package:gym_admin/presentation/providers/fixed_cost_provider.dart';
-import 'package:gym_admin/presentation/providers/recipe_calculator.dart';
 import 'package:provider/provider.dart';
 
 //* Formulario de registro de nuevas recetas

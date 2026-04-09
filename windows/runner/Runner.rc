@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "gym_admin" "\0"
+            VALUE "CompanyName", "com.AFtech" "\0"
+            VALUE "FileDescription", "cook_ledger" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "gym_admin" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "gym_admin.exe" "\0"
-            VALUE "ProductName", "gym_admin" "\0"
+            VALUE "InternalName", "cook_ledger" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 com.AFtech. All rights reserved." "\0"
+            VALUE "OriginalFilename", "cook_ledger.exe" "\0"
+            VALUE "ProductName", "cook_ledger" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

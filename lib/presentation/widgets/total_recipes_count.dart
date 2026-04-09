@@ -1,5 +1,5 @@
+import 'package:cook_ledger/data/datasource/Local/boxes.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:gym_admin/data/datasource/Local/boxes.dart';
 
 class TotalRecipesCount extends StatefulWidget {
 
