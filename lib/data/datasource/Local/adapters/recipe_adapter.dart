@@ -18,11 +18,15 @@ class RecipeModel extends HiveObject {
   @HiveField(3)
   final RecipeCostModel? recipeCostModel;
 
+  @HiveField(5)
+  final FixedCostsAndMarginAd? fixedCostsAndMargin;
+
   RecipeModel({
     required this.name,
     required this.principalProtein,
     this.additionalsingredients,
-    this.recipeCostModel
+    this.recipeCostModel,
+    required this.fixedCostsAndMargin,
   });
 
   //* TO JSON
@@ -31,6 +35,7 @@ class RecipeModel extends HiveObject {
     'principalProtein': principalProtein,
     'additionalsingredients': additionalsingredients,
     'recipeCostModel': recipeCostModel,
+    'fixedCostsAndMargin': fixedCostsAndMargin
   };
 
   //* JSON IMPORT
@@ -39,6 +44,7 @@ class RecipeModel extends HiveObject {
     principalProtein: List<PrincipalProteinModel>.from(json['principalProtein'].map((x) => PrincipalProteinModel.fromJson(x))),
     additionalsingredients: json['additionalsingredients'] != null ? AdditionalIngredients.fromJson(json['additionalsingredients']) : null,
     recipeCostModel: json['recipeCostModel'] != null ? RecipeCostModel.fromJson(json['recipeCostModel']) : null,
+    fixedCostsAndMargin: json['fixedCostsAndMargin'] != null ? FixedCostsAndMarginAd.fromJson(json['fixedCostsAndMargin']) : FixedCostsAndMarginAd(breadUnit: 0, packagingUnit: 0, operatingCost: 0, desiredProfitPercentage: 0)
   );
 
 }
@@ -153,4 +159,41 @@ class ItemsSections {
         kgCost: json["kgCost"],
         count: json["count"],
       );
+}
+
+@HiveType(typeId: 5)
+class FixedCostsAndMarginAd {
+  
+  @HiveField(0)
+  final double breadUnit;
+  
+  @HiveField(1)
+  final double packagingUnit;
+
+  @HiveField(2)
+  final double operatingCost;
+
+  @HiveField(3)
+  final double desiredProfitPercentage;
+
+  FixedCostsAndMarginAd({
+    required this.breadUnit,
+    required this.packagingUnit,
+    required this.operatingCost,
+    required this.desiredProfitPercentage,
+  });
+
+  Map<String, dynamic> toJson() => {
+    "breadUnit": breadUnit,
+    "packagingUnit": packagingUnit,
+    "operatingCost": operatingCost,
+    "desiredProfitPercentage": desiredProfitPercentage,
+  };
+
+  factory FixedCostsAndMarginAd.fromJson(Map<String, dynamic> json) => FixedCostsAndMarginAd(
+    breadUnit: (json["breadUnit"] ?? 0).toDouble(),
+    packagingUnit: (json["packagingUnit"] ?? 0).toDouble(),
+    operatingCost: (json["operatingCost"] ?? 0).toDouble(),
+    desiredProfitPercentage: (json["desiredProfitPercentage"] ?? 0).toDouble(),
+  );
 }

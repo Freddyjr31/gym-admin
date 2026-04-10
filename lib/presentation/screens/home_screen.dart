@@ -85,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final info = await PackageInfo.fromPlatform();
     setState(() {
       version = '${info.version} (${info.buildNumber})';
+      debugPrint('Versión cargada: ${info.version}');
     });
   }
 

@@ -211,10 +211,10 @@ class _FormFixedCostState extends State<FormFixedCost> {
                               return InfoBar(
                                 title: const Text('Gastos calculados ingresados correctamente'),
                                 content: Text('Costo total: $totalAllCostForm'),
-                                action: IconButton(
-                                  icon: const WindowsIcon(WindowsIcons.check_mark),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
+                                // action: IconButton(
+                                //   icon: const WindowsIcon(WindowsIcons.check_mark),
+                                //   onPressed: () => Navigator.pop(context),
+                                // ),
                                 severity: InfoBarSeverity.success,
                               );
                             });
