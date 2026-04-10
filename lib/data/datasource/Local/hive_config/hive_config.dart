@@ -45,5 +45,7 @@ class HiveConfig {
     //* costos fijos
     Hive.registerAdapter(FixedCostAdapterAdapter());
     Hive.registerAdapter(FixedCostItemAdapter());
+
+    Hive.registerAdapter(FixedCostsAndMarginAdAdapter());
   }
 }

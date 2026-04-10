@@ -2,7 +2,13 @@
 
 //////**\*\***[1.0.0]\***\*\*\*\***///////
 
-## [1.0.0+014] - 2026-04-06 FreddyJr31
+## [1.0.0+015] - 2026-04-10 FreddyJr31
+
+- [APP] - Actualizar precios en base al dolar en vista de listado.
+- [APP] - validar gastos fijos en navegación.
+- [APP] - agregar validaciones en formulario.
+
+## [1.0.0+014] - 2026-04-09 FreddyJr31
 
 - [APP] - Cambio de nombre del proyecto.
 - [APP] - Ejecutable con Inno Setup.

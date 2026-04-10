@@ -33,6 +33,8 @@ OutputBaseFilename=CookLedger
 SetupIconFile=C:\Users\User\Downloads\cook_ledger.ico
 SolidCompression=yes
 WizardStyle=modern dark polar
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog
 
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
@@ -59,3 +61,4 @@ Type: filesandordirs; Name: "{userappdata}\com.AFtech\cook_ledger\cook_ledger\hi
 ; Opcional: Elimina toda la carpeta de la app si queda vacía
 Type: dirifempty; Name: "{userappdata}\com.AFtech\cook_ledger\cook_ledger"
 Type: dirifempty; Name: "{userappdata}\com.AFtech\cook_ledger"
+Type: dirifempty; Name: "{userappdata}\com.AFtech"

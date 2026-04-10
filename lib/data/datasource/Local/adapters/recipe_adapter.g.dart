@@ -21,13 +21,14 @@ class RecipeModelAdapter extends TypeAdapter<RecipeModel> {
       principalProtein: (fields[1] as List).cast<PrincipalProteinModel>(),
       additionalsingredients: fields[2] as AdditionalIngredients?,
       recipeCostModel: fields[3] as RecipeCostModel?,
+      fixedCostsAndMargin: fields[5] as FixedCostsAndMarginAd?,
     );
   }
 
   @override
   void write(BinaryWriter writer, RecipeModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class RecipeModelAdapter extends TypeAdapter<RecipeModel> {
       ..writeByte(2)
       ..write(obj.additionalsingredients)
       ..writeByte(3)
-      ..write(obj.recipeCostModel);
+      ..write(obj.recipeCostModel)
+      ..writeByte(5)
+      ..write(obj.fixedCostsAndMargin);
   }
 
   @override
@@ -202,6 +205,49 @@ class ItemsSectionsAdapter extends TypeAdapter<ItemsSections> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ItemsSectionsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class FixedCostsAndMarginAdAdapter extends TypeAdapter<FixedCostsAndMarginAd> {
+  @override
+  final int typeId = 5;
+
+  @override
+  FixedCostsAndMarginAd read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return FixedCostsAndMarginAd(
+      breadUnit: fields[0] as double,
+      packagingUnit: fields[1] as double,
+      operatingCost: fields[2] as double,
+      desiredProfitPercentage: fields[3] as double,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, FixedCostsAndMarginAd obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.breadUnit)
+      ..writeByte(1)
+      ..write(obj.packagingUnit)
+      ..writeByte(2)
+      ..write(obj.operatingCost)
+      ..writeByte(3)
+      ..write(obj.desiredProfitPercentage);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FixedCostsAndMarginAdAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

@@ -1,5 +1,6 @@
 import 'package:cook_ledger/core/helpers/show_content_dialog_dynamic.dart';
 import 'package:cook_ledger/presentation/providers/exchange_rate_provider.dart';
+import 'package:cook_ledger/presentation/providers/fixed_cost_provider.dart';
 import 'package:cook_ledger/presentation/screens/form_screen.dart';
 import 'package:cook_ledger/presentation/screens/home_screen.dart';
 import 'package:cook_ledger/presentation/screens/list_screen.dart';
@@ -21,6 +22,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
   /// Tasa de cambio
   double echangeRate = 0.0;
 
+  /// key del formulario
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   /// Controlador de la tasa de cambio
   final TextEditingController _exchangeRateController = TextEditingController();
 
@@ -36,9 +40,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
 
-    /// Provider
+    /// Provider de tasa de cambio
     final exhangeRateProvider = context.watch<RateExchangeProvider>();
     echangeRate = exhangeRateProvider.getExchangeRate();
+    /// provider degastos mensuales o fijos
+    final fixedCostProvider = context.watch<FixedCostProvider>();
 
     return NavigationView(
       titleBar: TitleBar(
@@ -69,37 +75,42 @@ class _NavigationScreenState extends State<NavigationScreen> {
               //* Cambiar tasa de cambio en un dialog con un input
               ContentDialog(
                 title: Text('Tasa de cambio'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    InfoLabel(
-                      label: 'Nueva tasa de cambio',
-                      child: TextFormBox(
-                        controller: _exchangeRateController,
-                        placeholder: '0.50',
-                        validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                content: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InfoLabel(
+                        label: 'Nueva tasa de cambio',
+                        child: TextFormBox(
+                          controller: _exchangeRateController,
+                          placeholder: '0.50',
+                          validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Button(
-                          child: const Text('Cancelar'),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        const SizedBox(width: 10),
-                        Button(
-                          child: const Text('Guardar'),
-                          onPressed: () {
-                            final exchangeRate = double.tryParse(_exchangeRateController.text) ?? 0.0;
-                            exhangeRateProvider.setExhangeRate(exchangeRate);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Button(
+                            child: const Text('Cancelar'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const SizedBox(width: 10),
+                          Button(
+                            child: const Text('Guardar'),
+                            onPressed: () {
+                              if(_formKey.currentState!.validate()) {
+                                final exchangeRate = double.tryParse(_exchangeRateController.text) ?? 0.0;
+                                exhangeRateProvider.setExhangeRate(exchangeRate);
+                                Navigator.pop(context);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               )
             ),
@@ -111,6 +122,24 @@ class _NavigationScreenState extends State<NavigationScreen> {
         selected: _selectedIndex,
         displayMode: PaneDisplayMode.auto,
         onChanged: (index) => setState(() => _selectedIndex = index),
+        onItemPressed: (value) async {
+
+          //* obtener gastos fijos para verificar si hay o no
+          if (value == 2 && fixedCostProvider.getFixedCost() == 0) {
+            await displayInfoBar(context, builder: (context, close) {
+              return InfoBar(
+                title: const Text('No hay gastos fijos configurados'),
+                content: Text('Diríjase a la sección de gastos fijos en el inicio para configurarlos'),
+                severity: InfoBarSeverity.error,
+              );
+            });
+
+            //* Si el usuario intenta ir a la sección de registro sin tener gastos fijos configurados, se le muestra un mensaje de error y se le indica que debe configurar los gastos fijos en el inicio antes de poder acceder a esa sección.
+            //* redirige al usuario a la sección de gastos fijos en el inicio para que pueda configurarlos antes de acceder a la sección de registro.
+            setState(() => _selectedIndex = 0);
+          }
+
+        },
         header: const Text('Panel de navigación'),
         items: [
           PaneItem(

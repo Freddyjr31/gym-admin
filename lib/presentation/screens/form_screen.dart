@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 //* Formulario de registro de nuevas recetas
 class RecipeFormScreen extends StatefulWidget {
+
   const RecipeFormScreen({super.key});
 
   @override
@@ -44,6 +45,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   //* estado para los datos calculados
   late RecipeCalculation recipe;
 
+  late FixedCostsAndMarginAd fixedCostsAndMargin;
+  late FixedCostsAndMargin fixedCostsAndMarginModel;
+
   @override
   void initState() {
     super.initState();
@@ -56,32 +60,32 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       );
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _breadUnitCostController.dispose();
-    _packagingUnit.dispose();
-    _operationCost.dispose();
-    _desiredProfitPercentage.dispose();
+  // @override
+  // void dispose() {
+  //   _nameController.dispose();
+  //   _breadUnitCostController.dispose();
+  //   _packagingUnit.dispose();
+  //   _operationCost.dispose();
+  //   _desiredProfitPercentage.dispose();
 
-    for (var section in _sections) {
-      section.nameController.dispose();
-      for (var item in section.items) {
-        item.nameController.dispose();
-        item.pkgCostController.dispose();
-        item.countController.dispose();
-      }
-    }
+  //   for (var section in _sections) {
+  //     section.nameController.dispose();
+  //     for (var item in section.items) {
+  //       item.nameController.dispose();
+  //       item.pkgCostController.dispose();
+  //       item.countController.dispose();
+  //     }
+  //   }
 
-    for (var principalProtein in _principalProtein) {
-      principalProtein.shrinkagePercentageController.dispose();
-      principalProtein.buyWeightController.dispose();
-      principalProtein.buyKgWeightController.dispose();
-      principalProtein.weightPortionController.dispose();
-    }
+  //   for (var principalProtein in _principalProtein) {
+  //     principalProtein.shrinkagePercentageController.dispose();
+  //     principalProtein.buyWeightController.dispose();
+  //     principalProtein.buyKgWeightController.dispose();
+  //     principalProtein.weightPortionController.dispose();
+  //   }
     
-    super.dispose();
-  }
+  //   super.dispose();
+  // }
 
   //* Funcion para agregar una proteina
   void _agregarProteina() {
@@ -99,12 +103,14 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
 
   //* ============= FUNCIONES PARA AGREGAR Y ELIMINAR SECCIONES =============
+  /// Función para agregar una nueva sección
   void _agregarSeccion() {
     setState(() {
       _sections.add(SectionState());
     });
   }
 
+  /// Función para eliminar una sección
   void _eliminarSeccion(int index) {
     setState(() {
       final section = _sections[index];
@@ -118,12 +124,14 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     });
   }
 
+  /// Función para agregar un nuevo item
   void _agregarItem(int sectionIndex) {
     setState(() {
       _sections[sectionIndex].items.add(ItemState());
     });
   }
 
+  /// Función para eliminar un item
   void _eliminarItem(int sectionIndex, int itemIndex) {
     setState(() {
       final item = _sections[sectionIndex].items[itemIndex];
@@ -222,7 +230,6 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   Widget build(BuildContext context) {
 
     final size = MediaQuery.of(context).size;
-
     //* provider de cambio de moneda
     final exchangeRateProvider = context.watch<RateExchangeProvider>();
     //* provider de gastos fijos
@@ -343,6 +350,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               child: InfoLabel(
                                 label: 'Nombre de la proteína',
                                 child: TextFormBox(
+                                  keyboardType: TextInputType.text,
                                   controller: protein.proteinController,
                                   placeholder: 'Ej: Carne, Pollo, Pescado',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -377,7 +385,18 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                   controller: protein.buyWeightController,
                                   placeholder: '1\$',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                                  validator: (v) {
+
+                                    if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                                    // 2. Reemplazamos la coma por punto para poder validarlo como número
+                                    final cleanValue = v.replaceAll(',', '.');
+                                    final number = double.tryParse(cleanValue);
+
+                                    if (number == null) return 'Formato incorrecto';
+                                    if (number >= 60) return 'Margen demasiado alto';
+
+                                    return null;
+                                  },
                                 ),
                               ),
                             ),
@@ -387,8 +406,20 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                 child: TextFormBox(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: protein.buyKgWeightController,
-                                  placeholder: '5',
-                                  validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                                  placeholder: 'Ej: 5',
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (v) {
+
+                                    if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                                    // 2. Reemplazamos la coma por punto para poder validarlo como número
+                                    final cleanValue = v.replaceAll(',', '.');
+                                    final number = double.tryParse(cleanValue);
+
+                                    if (number == null) return 'Formato incorrecto';
+                                    if (number >= 60) return 'Margen demasiado alto';
+
+                                    return null;
+                                  },
                                 )
                               )
                             ),
@@ -406,9 +437,20 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                 child: TextFormBox(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: protein.shrinkagePercentageController,
-                                  placeholder: '10%',
+                                  placeholder: 'Ej: 10%',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                                  validator: (v) {
+
+                                    if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                                    // 2. Reemplazamos la coma por punto para poder validarlo como número
+                                    final cleanValue = v.replaceAll(',', '.');
+                                    final number = double.tryParse(cleanValue);
+
+                                    if (number == null) return 'Formato incorrecto';
+                                    if (number >= 60) return 'Margen demasiado alto';
+
+                                    return null;
+                                  },
                                 ),
                               ),
                             ),
@@ -418,9 +460,20 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                 child: TextFormBox(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: protein.weightPortionController,
-                                  placeholder: '0.25',
+                                  placeholder: 'Ej: 0.25',
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                                  validator: (v) {
+
+                                    if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                                    // 2. Reemplazamos la coma por punto para poder validarlo como número
+                                    final cleanValue = v.replaceAll(',', '.');
+                                    final number = double.tryParse(cleanValue);
+
+                                    if (number == null) return 'Formato incorrecto';
+                                    if (number >= 60) return 'Margen demasiado alto';
+
+                                    return null;
+                                  },
                                 ),
                               )
                             )
@@ -583,6 +636,19 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                       controller: item.pkgCostController,
                                       placeholder: 'Precio',
                                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      validator: (v) {
+
+                                        if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                                        // 2. Reemplazamos la coma por punto para poder validarlo como número
+                                        final cleanValue = v.replaceAll(',', '.');
+                                        final number = double.tryParse(cleanValue);
+
+                                        if (number == null) return 'Formato incorrecto';
+                                        if (number >= 60) return 'Margen demasiado alto';
+
+                                        return null;
+                                      },
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -594,6 +660,19 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                       controller: item.countController,
                                       placeholder: 'Cantidad usada (kg)',
                                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      validator: (v) {
+
+                                        if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                                        // 2. Reemplazamos la coma por punto para poder validarlo como número
+                                        final cleanValue = v.replaceAll(',', '.');
+                                        final number = double.tryParse(cleanValue);
+
+                                        if (number == null) return 'Formato incorrecto';
+                                        if (number >= 60) return 'Margen demasiado alto';
+
+                                        return null;
+                                      },
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -639,8 +718,20 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                       label: 'Costo por unidad de pan',
                       child: TextFormBox(
                         controller: _breadUnitCostController,
-                        placeholder: '1.50',
-                        validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        placeholder: 'Ej: 1.50',
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (v) {
+
+                          if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                          // 2. Reemplazamos la coma por punto para poder validarlo como número
+                          final cleanValue = v.replaceAll(',', '.');
+                          final number = double.tryParse(cleanValue);
+
+                          if (number == null) return 'Formato incorrecto';
+                          if (number >= 60) return 'Margen demasiado alto';
+
+                          return null;
+                        },
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
@@ -651,8 +742,20 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                       label: 'Costo por unidad de empaque',
                       child: TextFormBox(
                         controller: _packagingUnit,
-                        placeholder: '0.50',
-                        validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        placeholder: 'Ej: 0.50',
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (v) {
+
+                          if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                          // 2. Reemplazamos la coma por punto para poder validarlo como número
+                          final cleanValue = v.replaceAll(',', '.');
+                          final number = double.tryParse(cleanValue);
+
+                          if (number == null) return 'Formato incorrecto';
+                          if (number >= 60) return 'Margen demasiado alto';
+
+                          return null;
+                        },
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
@@ -669,8 +772,20 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                       label: 'Costo de operación',
                       child: TextFormBox(
                         controller: _operationCost,
-                        placeholder: '0.50',
-                        validator: (v) => v!.trim().isEmpty ? 'Obligatorio' : null,
+                        placeholder: 'Ej: 0.50',
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (v) {
+
+                          if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                          // 2. Reemplazamos la coma por punto para poder validarlo como número
+                          final cleanValue = v.replaceAll(',', '.');
+                          final number = double.tryParse(cleanValue);
+
+                          if (number == null) return 'Formato incorrecto';
+                          if (number >= 60) return 'Margen demasiado alto';
+
+                          return null;
+                        },
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
@@ -682,13 +797,17 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                       child: TextFormBox(
                         controller: _desiredProfitPercentage,
                         placeholder: 'Ej: 10%, 20%...',
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (v) {
-                          
-                          if (v!.trim().isEmpty) return 'Obligatorio';
-                          
-                          if (double.tryParse(v) == null) return 'Obligatorio';
 
-                          if(double.tryParse(v)! >= 60) return 'Margen demasiado alto';
+                          if (v == null || v.trim().isEmpty) return 'Obligatorio';
+
+                          // 2. Reemplazamos la coma por punto para poder validarlo como número
+                          final cleanValue = v.replaceAll(',', '.');
+                          final number = double.tryParse(cleanValue);
+
+                          if (number == null) return 'Formato incorrecto';
+                          if (number >= 60) return 'Margen demasiado alto';
 
                           return null;
                         },
@@ -711,15 +830,49 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     child: FilledButton(
                       style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
                       onPressed: () async {
+
+                        //* Validar form
                         if (_formKey.currentState!.validate()) {
+
+                          //* obtener gastos fijos para verificar si hay o no
+                          if (fixedCostProvider.getFixedCost() == 0) {
+                            return await displayInfoBar(context, builder: (context, close) {
+                              return InfoBar(
+                                title: const Text('No hay gastos fijos configurados'),
+                                content: Text('Diríjase a la sección de gastos fijos en el inicio para configurarlos'),
+                                action: Icon(
+                                  FluentIcons.check_mark, color: Colors.green, size: 20
+                                  // onPressed: () => Navigator.pop(context),
+                                ),
+                                severity: InfoBarSeverity.error,
+                              );
+                            });
+                          }
 
                           final additionalIngredients = buildAdditionalIngredientsModel();
                           final principalProteins = buildPrincipalProteinModel();
 
+                          setState(() {
+                            fixedCostsAndMargin = FixedCostsAndMarginAd(
+                              breadUnit: double.tryParse(_breadUnitCostController.text.trim()) ?? 0,
+                              packagingUnit: double.tryParse(_packagingUnit.text.trim()) ?? 0,
+                              operatingCost: double.tryParse(_operationCost.text.trim()) ?? 0,
+                              desiredProfitPercentage: double.tryParse(_desiredProfitPercentage.text.trim()) ?? 0
+                            );
+
+                            fixedCostsAndMarginModel = FixedCostsAndMargin(
+                              breadUnit: double.tryParse(_breadUnitCostController.text.trim()) ?? 0,
+                              packagingUnit: double.tryParse(_packagingUnit.text.trim()) ?? 0,
+                              operatingCost: double.tryParse(_operationCost.text.trim()) ?? 0,
+                              desiredProfitPercentage: double.tryParse(_desiredProfitPercentage.text.trim()) ?? 0
+                            );
+                          });
+
                           final recipeModel = RecipeModel(
                             name: _nameController.text.trim(),
                             principalProtein: principalProteins,
-                            additionalsingredients: additionalIngredients
+                            additionalsingredients: additionalIngredients,
+                            fixedCostsAndMargin: fixedCostsAndMargin
                           );
 
                           final calculator = RecipeCalculator(
@@ -748,12 +901,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                   quantityKg: item.count.toDouble()
                                 )).toList()
                               )).toList(),
-                              fixedCostsAndMargin: FixedCostsAndMargin(
-                                breadUnit: double.tryParse(_breadUnitCostController.text.trim()) ?? 0,
-                                packagingUnit: double.tryParse(_packagingUnit.text.trim()) ?? 0,
-                                operatingCost: double.tryParse(_operationCost.text.trim()) ?? 0,
-                                desiredProfitPercentage: double.tryParse(_desiredProfitPercentage.text.trim()) ?? 0
-                              )
+                              fixedCostsAndMargin: fixedCostsAndMarginModel
                             )
                           );
                                       
@@ -767,6 +915,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                             await ShowContentDialogDynamic.showContentDialogDynamic(
                               context,
                               ContentDialog(
+                                constraints: BoxConstraints.expand(width: size.width * 0.5, height: size.height * 0.8),
                                 title: Column(
                                   spacing: 8,
                                   mainAxisSize: MainAxisSize.max,
@@ -794,7 +943,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                         children: [
                                           TextSpan(
                                             text: "${calculatedCost.exchangeRate.toString()} Bs.",
-                                            style: FluentTheme.of(context).typography.body,
+                                            style: FluentTheme.of(context).typography.body?.copyWith(
+                                              color: Colors.green,
+                                            ),
                                           )
                                         ]
                                       ),
@@ -804,241 +955,263 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                 ) ,
                                 content: SingleChildScrollView(
                                   scrollDirection: Axis.vertical,
-                                  child: SizedBox(
-                                    width: size.width * 0.8,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      spacing: 4,
-                                      children: [
-                                    
-                                        const Divider(),
-                                    
-                                        Text(
-                                          'Ingredientes principales',
-                                          style: FluentTheme.of(context).typography.subtitle,
-                                        ),
-                                    
-                                        ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: calculatedCost.mainIngredientResults.length,
-                                          itemBuilder: (context, index) {
-                                    
-                                            final item = calculatedCost.mainIngredientResults[index];
-                                    
-                                            return Container(
-                                              margin: const EdgeInsets.only(bottom: 8),
-                                              padding: const EdgeInsets.all(5),
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.withOpacity(0.8),
-                                                borderRadius: BorderRadius.circular(10)
-                                              ),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    spacing: 4,
+                                    children: [
+                                  
+                                      const Divider(),
+                                  
+                                      Text(
+                                        'Ingredientes principales',
+                                        style: FluentTheme.of(context).typography.subtitle,
+                                      ),
+                                  
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: calculatedCost.mainIngredientResults.length,
+                                        itemBuilder: (context, index) {
+                                  
+                                          final item = calculatedCost.mainIngredientResults[index];
+                                  
+                                          return Container(
+                                            margin: const EdgeInsets.only(bottom: 8),
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              // color: Colors.grey.withOpacity(0.5),
+                                              borderRadius: BorderRadius.circular(10),
+                                              border: Border.all(color: Colors.grey, width: 2)
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                RichText(
+                                                    text: TextSpan(
+                                                    text: 'Proteina: ',
+                                                    style: FluentTheme.of(context).typography.body,
+                                                    children: [
+                                                      TextSpan(
+                                                        text: item.name,
+                                                        style: FluentTheme.of(context).typography.bodyStrong,
+                                                      )
+                                                    ]
+                                                  )),
+                                            
+                                                  Text('Cálculo de merma:', style: FluentTheme.of(context).typography.bodyStrong,),
                                                   RichText(
-                                                      text: TextSpan(
-                                                      text: 'Proteina: ',
-                                                      style: FluentTheme.of(context).typography.bodyStrong,
+                                                    text: TextSpan(
+                                                      text: 'Peso inicial: ',
+                                                      style: FluentTheme.of(context).typography.body,
                                                       children: [
                                                         TextSpan(
-                                                          text: item.name,
+                                                          text: '${item.wasteCalculations.initialWeightKg.toString()} Kg',
                                                           style: FluentTheme.of(context).typography.bodyStrong,
                                                         )
                                                       ]
-                                                    )),
-                                              
-                                                    Text('Cálculo de merma:'),
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        text: 'Peso inicial: ',
-                                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                                        children: [
-                                                          TextSpan(
-                                                            text: '${item.wasteCalculations.initialWeightKg.toString()} Kg',
-                                                            style: FluentTheme.of(context).typography.body,
-                                                          )
-                                                        ]
-                                                      ),
                                                     ),
-                                              
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        text: '% merma: ',
-                                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                                        children: [
-                                                          TextSpan(
-                                                            text: '${item.wasteCalculations.wastePercentage.toString()} %',
-                                                            style: FluentTheme.of(context).typography.body,
-                                                          )
-                                                        ]
-                                                      ),
+                                                  ),
+                                            
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      text: '% merma: ',
+                                                      style: FluentTheme.of(context).typography.body,
+                                                      children: [
+                                                        TextSpan(
+                                                          text: '${item.wasteCalculations.wastePercentage.toString()} %',
+                                                          style: FluentTheme.of(context).typography.bodyStrong,
+                                                        )
+                                                      ]
                                                     ),
-                                              
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        text: 'Peso útil: ',
-                                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                                        children: [
-                                                          TextSpan(
-                                                            text: '${item.wasteCalculations.usableWeightKg.toString()} Kg',
-                                                            style: FluentTheme.of(context).typography.body,
-                                                          )
-                                                        ]
-                                                      ),
+                                                  ),
+                                            
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      text: 'Peso útil: ',
+                                                      style: FluentTheme.of(context).typography.body,
+                                                      children: [
+                                                        TextSpan(
+                                                          text: '${item.wasteCalculations.usableWeightKg.toString()} Kg',
+                                                          style: FluentTheme.of(context).typography.bodyStrong,
+                                                        )
+                                                      ]
                                                     ),
-                                              
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        text: 'Precio Real: ',
-                                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                                        children: [
-                                                          TextSpan(
-                                                            text: item.wasteCalculations.realPricePerKg.toString(),
-                                                            style: FluentTheme.of(context).typography.body,
-                                                          )
-                                                        ]
-                                                      ),
+                                                  ),
+                                            
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      text: 'Precio Real: ',
+                                                      style: FluentTheme.of(context).typography.body,
+                                                      children: [
+                                                        TextSpan(
+                                                          text: item.wasteCalculations.realPricePerKg.toString(),
+                                                          style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                            color: Colors.green,
+                                                          ),
+                                                        )
+                                                      ]
                                                     ),
-                                              
-                                                    //* =============== Porció utilizada
-                                              
-                                                    Text(
-                                                      'Porción utilizada',
-                                                      style: FluentTheme.of(context).typography.bodyStrong,
+                                                  ),
+                                            
+                                                  //* =============== Porció utilizada
+                                            
+                                                  Text(
+                                                    'Porción utilizada',
+                                                    style: FluentTheme.of(context).typography.bodyStrong,
+                                                  ),
+                                            
+                                                  // RichText(
+                                                  //   text: TextSpan(
+                                                  //     text: 'Cantidad de porcines posibles: ',
+                                                  //     style: FluentTheme.of(context).typography.bodyStrong,
+                                                  //     children: [
+                                                  //       TextSpan(
+                                                  //         text: "${item.portion.weightUsedKg.toInt().toString()} porciones",
+                                                  //         style: FluentTheme.of(context).typography.body,
+                                                  //       )
+                                                  //     ]
+                                                  //   ),
+                                                  // ),
+                                            
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      text: 'Costo Porción: ',
+                                                      style: FluentTheme.of(context).typography.body,
+                                                      children: [
+                                                        TextSpan(
+                                                          text: item.portion.cost.toString(),
+                                                          style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                            color: Colors.green,
+                                                          ),
+                                                        )
+                                                      ]
                                                     ),
-                                              
-                                                    // RichText(
-                                                    //   text: TextSpan(
-                                                    //     text: 'Cantidad de porcines posibles: ',
-                                                    //     style: FluentTheme.of(context).typography.bodyStrong,
-                                                    //     children: [
-                                                    //       TextSpan(
-                                                    //         text: "${item.portion.weightUsedKg.toInt().toString()} porciones",
-                                                    //         style: FluentTheme.of(context).typography.body,
-                                                    //       )
-                                                    //     ]
-                                                    //   ),
-                                                    // ),
-                                              
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        text: 'Costo Porción: ',
-                                                        style: FluentTheme.of(context).typography.bodyStrong,
-                                                        children: [
-                                                          TextSpan(
-                                                            text: item.portion.cost.toString(),
-                                                            style: FluentTheme.of(context).typography.body,
-                                                          )
-                                                        ]
-                                                      ),
-                                                    ),
-                                                ],
+                                                  ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      ),
+                                  
+                                      //* =============== RESUMEN DE COSTOS
+                                  
+                                      const Divider(),
+                                  
+                                      Text(
+                                        'Resumen de costos',
+                                        style: FluentTheme.of(context).typography.subtitle,
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Costo total ingredientes: ',
+                                          style: FluentTheme.of(context).typography.body,
+                                          children: [
+                                            TextSpan(
+                                              text: calculatedCost.economicSummary.totalIngredientsCost.toString(),
+                                              style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                color: Colors.green,
                                               ),
-                                            );
-                                          }
+                                            )
+                                          ]
                                         ),
-                                    
-                                        //* =============== RESUMEN DE COSTOS
-                                    
-                                        const Divider(),
-                                    
-                                        Text(
-                                          'Resumen de costos',
-                                          style: FluentTheme.of(context).typography.subtitle,
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Ganancia esperada: ',
+                                          style: FluentTheme.of(context).typography.body,
+                                          children: [
+                                            TextSpan(
+                                              text: calculatedCost.economicSummary.expectedProfit.toString(),
+                                              style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                color: Colors.green,
+                                              ),
+                                            )
+                                          ]
                                         ),
-                                    
-                                        RichText(
-                                          text: TextSpan(
-                                            text: 'Costo total ingredientes: ',
-                                            style: FluentTheme.of(context).typography.bodyStrong,
-                                            children: [
-                                              TextSpan(
-                                                text: calculatedCost.economicSummary.totalIngredientsCost.toString(),
-                                                style: FluentTheme.of(context).typography.body,
-                                              )
-                                            ]
-                                          ),
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Gastos Fijos por Unidad: ',
+                                          style: FluentTheme.of(context).typography.body,
+                                          children: [
+                                            TextSpan(
+                                              text: calculatedCost.economicSummary.unitFixedExpenses.toString(),
+                                              style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                color: Colors.green,
+                                              ),
+                                            )
+                                          ]
                                         ),
-                                    
-                                        RichText(
-                                          text: TextSpan(
-                                            text: 'Ganancia esperada: ',
-                                            style: FluentTheme.of(context).typography.bodyStrong,
-                                            children: [
-                                              TextSpan(
-                                                text: calculatedCost.economicSummary.expectedProfit.toString(),
-                                                style: FluentTheme.of(context).typography.body,
-                                              )
-                                            ]
-                                          ),
+                                      ),
+                                  
+                                      const SizedBox(height: 8),
+                                      const Divider(),
+                                  
+                                      //* BUSSINES MAINTENCE
+                                      Text(
+                                        'Mantenimiento del negocio',
+                                        style: FluentTheme.of(context).typography.subtitle,
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Gastos generales: ',
+                                          style: FluentTheme.of(context).typography.body,
+                                          children: [
+                                            TextSpan(
+                                              text: calculatedCost.businessMaintenance.monthlyFixedExpenses.toString(),
+                                              style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                color: Colors.green,
+                                              ),
+                                            )
+                                          ]
                                         ),
-                                    
-                                        RichText(
-                                          text: TextSpan(
-                                            text: 'Gastos Fijos por Unidad: ',
-                                            style: FluentTheme.of(context).typography.bodyStrong,
-                                            children: [
-                                              TextSpan(
-                                                text: calculatedCost.economicSummary.unitFixedExpenses.toString(),
-                                                style: FluentTheme.of(context).typography.body,
-                                              )
-                                            ]
-                                          ),
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Ganancia: ',
+                                          style: FluentTheme.of(context).typography.body,
+                                          children: [
+                                            TextSpan(
+                                              text: calculatedCost.businessMaintenance.netProfitPerUnit.toString(),
+                                              style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                                                color: Colors.green,
+                                              ),
+                                            )
+                                          ]
                                         ),
-                                    
-                                        const SizedBox(height: 8),
-                                        const Divider(),
-                                    
-                                        //* BUSSINES MAINTENCE
-                                        Text(
-                                          'Mantenimiento del negocio',
-                                          style: FluentTheme.of(context).typography.subtitle,
+                                      ),
+                                  
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Punto de equilibrio: ',
+                                          style: FluentTheme.of(context).typography.body,
+                                          children: [
+                                            TextSpan(
+                                              text: calculatedCost.businessMaintenance.unitsForBreakEven.toString(),
+                                              style: FluentTheme.of(context).typography.bodyStrong,
+                                            )
+                                          ]
                                         ),
-                                    
-                                        RichText(
-                                          text: TextSpan(
-                                            text: 'Gastos generales: ',
-                                            style: FluentTheme.of(context).typography.bodyStrong,
-                                            children: [
-                                              TextSpan(
-                                                text: calculatedCost.businessMaintenance.monthlyFixedExpenses.toString(),
-                                                style: FluentTheme.of(context).typography.body,
-                                              )
-                                            ]
-                                          ),
+                                      ),
+                                  
+                                      const SizedBox(height: 8),
+                                      const Divider(),
+                                  
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
-                                    
-                                        RichText(
-                                          text: TextSpan(
-                                            text: 'Ganancia: ',
-                                            style: FluentTheme.of(context).typography.bodyStrong,
-                                            children: [
-                                              TextSpan(
-                                                text: calculatedCost.businessMaintenance.netProfitPerUnit.toString(),
-                                                style: FluentTheme.of(context).typography.body,
-                                              )
-                                            ]
-                                          ),
-                                        ),
-                                    
-                                        RichText(
-                                          text: TextSpan(
-                                            text: 'Punto de equilibrio: ',
-                                            style: FluentTheme.of(context).typography.bodyStrong,
-                                            children: [
-                                              TextSpan(
-                                                text: calculatedCost.businessMaintenance.unitsForBreakEven.toString(),
-                                                style: FluentTheme.of(context).typography.body,
-                                              )
-                                            ]
-                                          ),
-                                        ),
-                                    
-                                        Row(
-                                          spacing: 8,
+                                        child: Row(
+                                          
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
@@ -1056,9 +1229,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                             ),
                                           ],
                                         ),
-                                        
-                                      ]),
-                                  ),
+                                      ),
+                                      
+                                    ]),
                                 ),
                                 actions: [
                                   FilledButton(
@@ -1076,6 +1249,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                           name: _nameController.text.trim(),
                                           principalProtein: principalProteins,
                                           additionalsingredients: additionalIngredients,
+                                          fixedCostsAndMargin: fixedCostsAndMargin,
                                           recipeCostModel: RecipeCostModel(
                                             recipeName: _nameController.text.trim(),
                                             exchangeRate: calculatedCost.exchangeRate,
@@ -1091,8 +1265,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                                               monthlyFixedExpenses: calculatedCost.businessMaintenance.monthlyFixedExpenses,
                                               netProfitperUnit: calculatedCost.businessMaintenance.netProfitPerUnit,
                                               unitsForBreakEven: calculatedCost.businessMaintenance.unitsForBreakEven
-                                            )
-                                          )
+                                            ),
+                                          ),
                                         );
                               
                                         //* Guarda la receta en la "caja"
